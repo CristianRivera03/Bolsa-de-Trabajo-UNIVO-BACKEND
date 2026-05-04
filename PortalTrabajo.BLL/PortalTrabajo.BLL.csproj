@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PortalTrabajo.DAL\PortalTrabajo.DAL.csproj" />
+    <ProjectReference Include="..\PortalTrabajo.DTO\PortalTrabajo.DTO.csproj" />
+    <ProjectReference Include="..\PortalTrabajo.Model\PortalTrabajo.Model.csproj" />
+    <ProjectReference Include="..\PortalTrabajo.Utility\PortalTrabajo.Utility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Implementation\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace PortalTrabajo.Model;
+
+public partial class CatEstadosPostulacion
+{
+    public int Id { get; set; }
+
+    public string Nombre { get; set; } = null!;
+}

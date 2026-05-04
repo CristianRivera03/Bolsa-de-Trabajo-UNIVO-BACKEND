@@ -1,0 +1,112 @@
+using AutoMapper;
+using PortalTrabajo.BLL.Services.Contract;
+using PortalTrabajo.DAL.Repositories.Contract;
+using PortalTrabajo.DTO.Alumnos;
+using PortalTrabajo.DTO.Auth;
+using PortalTrabajo.Model;
+using PortalTrabajo.Utility;
+using System;
+using System.Threading.Tasks;
+
+namespace PortalTrabajo.BLL.Services.Implementation
+{
+    public class AlumnoService : IAlumnoService
+    {
+        private readonly IGenericRepository<AlumnosActivo> _alumnoRepo;
+        private readonly IGenericRepository<Usuario> _usuarioRepo;
+        private readonly IGenericRepository<PerfilesEstudiante> _perfilRepo;
+        private readonly IGenericRepository<CatRole> _rolRepo;
+        private readonly IMapper _mapper;
+
+        public AlumnoService(
+            IGenericRepository<AlumnosActivo> alumnoRepo,
+            IGenericRepository<Usuario> usuarioRepo,
+            IGenericRepository<PerfilesEstudiante> perfilRepo,
+            IGenericRepository<CatRole> rolRepo,
+            IMapper mapper)
+        {
+            _alumnoRepo = alumnoRepo;
+            _usuarioRepo = usuarioRepo;
+            _perfilRepo = perfilRepo;
+            _rolRepo = rolRepo;
+            _mapper = mapper;
+        }
+
+        public async Task<AlumnoActivoDTO> Consultar(VerificarAlumnoDTO model)
+        {
+            // 1. Verificar si el alumno existe en la DB de la universidad (mock)
+            var alumnoDb = await _alumnoRepo.Get(a => a.Carnet == model.Carnet && a.PasswordPortal == model.PasswordPortal);
+            
+            if (alumnoDb == null)
+            {
+                throw new UnauthorizedAccessException("Credenciales incorrectas o carnet no encontrado en el portal de la universidad.");
+            }
+
+            // 2. Verificar si ya se registró previamente en la bolsa de trabajo
+            var emailGenerado = $"{model.Carnet}@univo.edu.sv".ToLower();
+            var yaRegistrado = await _usuarioRepo.Exists(u => u.Email == emailGenerado);
+            if (yaRegistrado)
+            {
+                throw new InvalidOperationException("El alumno ya se encuentra registrado en la bolsa de trabajo. Por favor, inicia sesión.");
+            }
+
+            return _mapper.Map<AlumnoActivoDTO>(alumnoDb);
+        }
+
+        public async Task<SessionDTO> Registrar(RegistroEstudianteDTO model)
+        {
+            // 1. Validar nuevamente contra el portal mock
+            var alumnoDb = await _alumnoRepo.Get(a => a.Carnet == model.Carnet && a.PasswordPortal == model.PasswordPortal);
+            if (alumnoDb == null)
+            {
+                throw new UnauthorizedAccessException("Credenciales incorrectas.");
+            }
+
+            // 2. Validar que no se registre doble
+            var emailGenerado = $"{model.Carnet}@univo.edu.sv".ToLower();
+            var yaRegistrado = await _usuarioRepo.Exists(u => u.Email == emailGenerado);
+            if (yaRegistrado)
+            {
+                throw new InvalidOperationException("El alumno ya se encuentra registrado en la bolsa de trabajo.");
+            }
+
+            // Buscar Rol de Estudiante
+            var rol = await _rolRepo.Get(r => r.Nombre == "Estudiante" || r.Nombre == "Alumno");
+            int rolId = rol != null ? rol.Id : 2; // Fallback a 2 si no lo encuentra por nombre
+
+            // 3. Crear el Usuario
+            var nuevoUsuario = new Usuario
+            {
+                Email = emailGenerado,
+                PasswordHash = SecurityHelper.HashPassword(model.PasswordPortal),
+                RolId = rolId,
+                Activo = true,
+                FechaRegistro = DateTime.Now
+            };
+
+            await _usuarioRepo.Create(nuevoUsuario);
+
+            // 4. Crear el PerfilEstudiante
+            var nuevoPerfil = new PerfilesEstudiante
+            {
+                UsuarioId = nuevoUsuario.Id,
+                Carnet = alumnoDb.Carnet,
+                Nombres = alumnoDb.Nombres,
+                Apellidos = alumnoDb.Apellidos,
+                Genero = alumnoDb.Genero
+                // Si la tabla tuviera FechaNacimiento, se mapearía aquí. 
+            };
+
+            await _perfilRepo.Create(nuevoPerfil);
+
+            // 5. Retornar Sesion
+            return new SessionDTO
+            {
+                UsuarioId = nuevoUsuario.Id,
+                Email = nuevoUsuario.Email,
+                RolName = rol?.Nombre ?? "Estudiante",
+                Token = "token_temporal_hasta_configurar_jwt"
+            };
+        }
+    }
+}

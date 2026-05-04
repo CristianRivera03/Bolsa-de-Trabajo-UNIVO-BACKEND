@@ -1,0 +1,81 @@
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using PortalTrabajo.Model;
+using PortalTrabajo.DTO.Auth;
+using PortalTrabajo.DTO.Usuarios;
+using PortalTrabajo.DTO.Alumnos;
+using PortalTrabajo.DTO.PerfilesEstudiante;
+using PortalTrabajo.DTO.Empresas;
+using PortalTrabajo.DTO.OfertasLaborales;
+using PortalTrabajo.DTO.Catalogos;
+
+namespace PortalTrabajo.Utility
+{
+    public class AutoMapperProfile : Profile
+    {
+        public AutoMapperProfile()
+        {
+            #region Alumnos (Mock DB)
+            CreateMap<AlumnosActivo, AlumnoActivoDTO>();
+            #endregion
+
+            #region Usuarios & Auth
+            CreateMap<Usuario, UsuarioDTO>()
+                .ForMember(destino => destino.RolName, opt => opt.MapFrom(origen => origen.Rol.Nombre));
+
+            CreateMap<UsuarioCreateDTO, Usuario>();
+
+            CreateMap<Usuario, SessionDTO>()
+                .ForMember(destino => destino.RolName, opt => opt.MapFrom(origen => origen.Rol.Nombre));
+            #endregion
+
+            #region Perfiles Estudiante
+            CreateMap<PerfilesEstudiante, PerfilEstudianteDTO>()
+                .ForMember(destino => destino.Educaciones, opt => opt.MapFrom(origen => origen.Educacions))
+                .ForMember(destino => destino.Habilidades, opt => opt.MapFrom(origen => origen.EstudianteHabilidades))
+                .ForMember(destino => destino.Idiomas, opt => opt.MapFrom(origen => origen.EstudianteIdiomas));
+
+            CreateMap<PerfilEstudianteUpdateDTO, PerfilesEstudiante>();
+
+            CreateMap<Educacion, EducacionDTO>()
+                .ForMember(destino => destino.GradoAcademicoNombre, opt => opt.MapFrom(origen => origen.GradoAcademico.Nombre));
+
+            CreateMap<ExperienciasLaborale, ExperienciaLaboralDTO>().ReverseMap();
+
+            CreateMap<EstudianteHabilidade, EstudianteHabilidadDTO>()
+                .ForMember(destino => destino.NombreHabilidad, opt => opt.MapFrom(origen => origen.Habilidad.Nombre));
+
+            CreateMap<EstudianteIdioma, EstudianteIdiomaDTO>()
+                .ForMember(destino => destino.NivelNombre, opt => opt.MapFrom(origen => origen.Nivel.Nombre));
+            #endregion
+
+            #region Empresas
+            CreateMap<Empresa, EmpresaDTO>().ReverseMap();
+            CreateMap<EmpresaCreateDTO, Empresa>();
+            CreateMap<EmpresaUpdateDTO, Empresa>();
+            #endregion
+
+            #region Ofertas Laborales
+            CreateMap<OfertasLaborale, OfertaLaboralDTO>()
+                .ForMember(destino => destino.EmpresaNombre, opt => opt.MapFrom(origen => origen.Empresa.NombreComercial))
+                .ForMember(destino => destino.EmpresaLogoUrl, opt => opt.MapFrom(origen => origen.Empresa.LogoUrl))
+                .ForMember(destino => destino.ModalidadNombre, opt => opt.MapFrom(origen => origen.Modalidad.Nombre));
+
+            CreateMap<OfertaLaboralCreateDTO, OfertasLaborale>();
+            CreateMap<OfertaLaboralUpdateDTO, OfertasLaborale>();
+            #endregion
+
+            #region Catalogos
+            CreateMap<CatRole, CatalogDTO>().ReverseMap();
+            CreateMap<CatModalidade, CatalogDTO>().ReverseMap();
+            CreateMap<CatGradosAcademico, CatalogDTO>().ReverseMap();
+            CreateMap<CatNivelesIdioma, CatalogDTO>().ReverseMap();
+            CreateMap<Habilidade, CatalogDTO>().ReverseMap();
+            CreateMap<CatEstadosPostulacion, CatalogDTO>().ReverseMap();
+            #endregion
+        }
+    }
+}
