@@ -13,8 +13,4 @@
     <ProjectReference Include="..\PortalTrabajo.Utility\PortalTrabajo.Utility.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Implementation\" />
-  </ItemGroup>
-
 </Project>

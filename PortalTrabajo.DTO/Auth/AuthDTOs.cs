@@ -13,6 +13,7 @@ namespace PortalTrabajo.DTO.Auth
         public int UsuarioId { get; set; }
         public string Email { get; set; }
         public string RolName { get; set; }
+        public string NombreCompleto { get; set; }
         public string Token { get; set; }
     }
 }
