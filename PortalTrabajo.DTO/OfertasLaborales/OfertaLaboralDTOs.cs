@@ -25,6 +25,7 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public int EmpresaId { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
+        public string Requisitos { get; set; }
         public int ModalidadId { get; set; }
         public string Ubicacion { get; set; }
         public decimal? SalarioMin { get; set; }

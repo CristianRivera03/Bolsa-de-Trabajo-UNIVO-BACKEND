@@ -38,5 +38,26 @@ namespace PortalTrabajo.BLL.Services.Implementation
                 throw new Exception("Error al obtener las ofertas laborales", ex);
             }
         }
+        public async Task<OfertaLaboralDTO> Crear(OfertaLaboralCreateDTO modelo)
+        {
+            try
+            {
+                var dbModelo = _mapper.Map<OfertasLaborale>(modelo);
+                dbModelo.FechaPublicacion = DateTime.Now;
+                dbModelo.Activa = true;
+
+                var ofertaCreada = await _ofertaRepositorio.Create(dbModelo);
+
+                if (ofertaCreada.Id == 0)
+                    throw new TaskCanceledException("No se pudo crear la oferta laboral");
+
+                return _mapper.Map<OfertaLaboralDTO>(ofertaCreada);
+            }
+            catch (Exception ex)
+            {
+                var mensajeError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                throw new Exception($"Error DB: {mensajeError}");
+            }
+        }
     }
 }

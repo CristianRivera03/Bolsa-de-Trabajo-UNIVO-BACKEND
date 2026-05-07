@@ -38,5 +38,26 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, rsp);
             }
         }
+
+        [HttpPost("crear")]
+        public async Task<IActionResult> Crear([FromBody] OfertaLaboralCreateDTO model)
+        {
+            var rsp = new Response<OfertaLaboralDTO>();
+            try
+            {
+                var ofertaCreada = await _ofertaService.Crear(model);
+
+                rsp.status = true;
+                rsp.value = ofertaCreada;
+                return Ok(rsp);
+            }
+            catch (Exception ex)
+            {
+                rsp.status = false;
+                rsp.msg = ex.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, rsp);
+            }
+        }
+
     }
 }

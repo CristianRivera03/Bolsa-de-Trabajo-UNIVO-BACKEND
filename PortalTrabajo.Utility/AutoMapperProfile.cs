@@ -57,7 +57,19 @@ namespace PortalTrabajo.Utility
 
             #region Empresas
             CreateMap<Empresa, EmpresaDTO>().ReverseMap();
-            CreateMap<EmpresaCreateDTO, Empresa>();
+
+            //Dto a empresas
+            CreateMap<EmpresaCreateDTO, Empresa>()
+                .ForMember(dest => dest.UsuarioId, opt => opt.Ignore());
+
+            //Dto a usuarios
+
+            CreateMap<EmpresaCreateDTO, Usuario>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.RolId, opt => opt.Ignore())
+                .ForMember(dest => dest.Activo, opt => opt.Ignore());
+
             CreateMap<EmpresaUpdateDTO, Empresa>();
             #endregion
 

@@ -7,5 +7,6 @@ namespace PortalTrabajo.BLL.Services.Contract
     public interface IOfertaLaboralService
     {
         Task<List<OfertaLaboralDTO>> ObtenerTodos();
+        Task<OfertaLaboralDTO> Crear(OfertaLaboralCreateDTO modelo);
     }
 }

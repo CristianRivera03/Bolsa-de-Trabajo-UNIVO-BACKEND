@@ -14,11 +14,11 @@ namespace PortalTrabajo.DTO.Empresas
 
     public class EmpresaCreateDTO
     {
-        public int UsuarioId { get; set; }
+        public string Email { get; set; } 
+        public string Password { get; set; }
         public string NombreComercial { get; set; }
         public string Sector { get; set; }
         public string SitioWeb { get; set; }
-        public string LogoUrl { get; set; }
     }
 
     public class EmpresaUpdateDTO

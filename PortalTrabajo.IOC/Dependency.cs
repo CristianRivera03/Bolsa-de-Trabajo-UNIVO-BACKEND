@@ -28,6 +28,7 @@ namespace PortalTrabajo.IOC
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IAlumnoService, PortalTrabajo.BLL.Services.Implementation.AlumnoService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IOfertaLaboralService, PortalTrabajo.BLL.Services.Implementation.OfertaLaboralService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IAuthService, PortalTrabajo.BLL.Services.Implementation.AuthService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEmpresaService, PortalTrabajo.BLL.Services.Implementation.EmpresaService>();
             //Automapper
             services.AddAutoMapper( cfg =>
             {
