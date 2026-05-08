@@ -13,11 +13,13 @@ namespace PortalTrabajo.BLL.Services.Implementation
     public class OfertaLaboralService : IOfertaLaboralService
     {
         private readonly IGenericRepository<OfertasLaborale> _ofertaRepositorio;
+        private readonly IGenericRepository<Empresa> _empresaRepositorio;
         private readonly IMapper _mapper;
 
-        public OfertaLaboralService(IGenericRepository<OfertasLaborale> ofertaRepositorio, IMapper mapper)
+        public OfertaLaboralService(IGenericRepository<OfertasLaborale> ofertaRepositorio, IGenericRepository<Empresa> empresaRepositorio, IMapper mapper)
         {
             _ofertaRepositorio = ofertaRepositorio;
+            _empresaRepositorio = empresaRepositorio;
             _mapper = mapper;
         }
 
@@ -42,7 +44,15 @@ namespace PortalTrabajo.BLL.Services.Implementation
         {
             try
             {
+                var empresaReal = await _empresaRepositorio.Get(e => e.UsuarioId == modelo.EmpresaId);
+
+                if (empresaReal == null)
+                    throw new Exception("No se encontró un perfil de empresa asociado a este usuario.");
+
                 var dbModelo = _mapper.Map<OfertasLaborale>(modelo);
+
+                dbModelo.EmpresaId = empresaReal.Id;
+
                 dbModelo.FechaPublicacion = DateTime.Now;
                 dbModelo.Activa = true;
 

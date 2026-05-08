@@ -29,6 +29,7 @@ namespace PortalTrabajo.Utility
             CreateMap<UsuarioCreateDTO, Usuario>();
 
             CreateMap<Usuario, SessionDTO>()
+                .ForMember(dest => dest.UsuarioId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(destino => destino.RolName, opt => opt.MapFrom(origen => origen.Rol.Nombre))
                 .ForMember(destino => destino.NombreCompleto, opt => opt.MapFrom(origen => 
                     origen.PerfilesEstudiante != null ? origen.PerfilesEstudiante.Nombres + " " + origen.PerfilesEstudiante.Apellidos : 
