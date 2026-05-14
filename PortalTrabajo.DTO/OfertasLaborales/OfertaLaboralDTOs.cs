@@ -18,6 +18,7 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public DateTime? FechaPublicacion { get; set; }
         public DateTime? FechaExpiracion { get; set; }
         public bool? Activa { get; set; }
+        public List<string> Carreras { get; set; } = new List<string>();
     }
 
     public class OfertaLaboralCreateDTO
@@ -31,6 +32,7 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public decimal? SalarioMin { get; set; }
         public decimal? SalarioMax { get; set; }
         public DateTime? FechaExpiracion { get; set; }
+        public List<int> CarreraIds { get; set; } = new List<int>();
     }
 
     public class OfertaLaboralUpdateDTO
@@ -43,5 +45,6 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public decimal? SalarioMax { get; set; }
         public DateTime? FechaExpiracion { get; set; }
         public bool? Activa { get; set; }
+        public List<int> CarreraIds { get; set; } = new List<int>();
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using PortalTrabajo.Model;
 
-namespace PortalTrabajo.DAL.DBConext;
+namespace PortalTrabajo.Model;
 
 public partial class PortalTrabajoDbContext : DbContext
 {
@@ -17,6 +16,8 @@ public partial class PortalTrabajoDbContext : DbContext
     }
 
     public virtual DbSet<AlumnosActivo> AlumnosActivos { get; set; }
+
+    public virtual DbSet<CatCarrera> CatCarreras { get; set; }
 
     public virtual DbSet<CatEstadosPostulacion> CatEstadosPostulacions { get; set; }
 
@@ -75,6 +76,15 @@ public partial class PortalTrabajoDbContext : DbContext
                 .IsFixedLength();
             entity.Property(e => e.Nombres).HasMaxLength(100);
             entity.Property(e => e.PasswordPortal).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<CatCarrera>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CatCarre__3214EC0719BD5C92");
+
+            entity.Property(e => e.Activa).HasDefaultValue(true);
+            entity.Property(e => e.Facultad).HasMaxLength(150);
+            entity.Property(e => e.Nombre).HasMaxLength(150);
         });
 
         modelBuilder.Entity<CatEstadosPostulacion>(entity =>
@@ -241,6 +251,21 @@ public partial class PortalTrabajoDbContext : DbContext
                 .HasForeignKey(d => d.ModalidadId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Ofertas_Modalidad");
+
+            entity.HasMany(d => d.Carreras).WithMany(p => p.Oferta)
+                .UsingEntity<Dictionary<string, object>>(
+                    "OfertaCarrera",
+                    r => r.HasOne<CatCarrera>().WithMany()
+                        .HasForeignKey("CarreraId")
+                        .HasConstraintName("FK_OfertaCarreras_Carrera"),
+                    l => l.HasOne<OfertasLaborale>().WithMany()
+                        .HasForeignKey("OfertaId")
+                        .HasConstraintName("FK_OfertaCarreras_Oferta"),
+                    j =>
+                    {
+                        j.HasKey("OfertaId", "CarreraId").HasName("PK__OfertaCa__F186AF337FFF2F6D");
+                        j.ToTable("OfertaCarreras");
+                    });
         });
 
         modelBuilder.Entity<PerfilesEstudiante>(entity =>
@@ -252,6 +277,7 @@ public partial class PortalTrabajoDbContext : DbContext
             entity.HasIndex(e => e.Carnet, "UQ__Perfiles__5E387B4D0887FBB9").IsUnique();
 
             entity.Property(e => e.Apellidos).HasMaxLength(100);
+            entity.Property(e => e.BuscaEmpleo).HasDefaultValue(true);
             entity.Property(e => e.Carnet).HasMaxLength(20);
             entity.Property(e => e.Direccion).HasMaxLength(255);
             entity.Property(e => e.EnlaceGitHub).HasMaxLength(2048);
@@ -264,6 +290,10 @@ public partial class PortalTrabajoDbContext : DbContext
                 .IsFixedLength();
             entity.Property(e => e.Nombres).HasMaxLength(100);
             entity.Property(e => e.Telefono).HasMaxLength(20);
+
+            entity.HasOne(d => d.Carrera).WithMany(p => p.PerfilesEstudiantes)
+                .HasForeignKey(d => d.CarreraId)
+                .HasConstraintName("FK_PerfilesEstudiantes_Carrera");
 
             entity.HasOne(d => d.Usuario).WithOne(p => p.PerfilesEstudiante)
                 .HasForeignKey<PerfilesEstudiante>(d => d.UsuarioId)

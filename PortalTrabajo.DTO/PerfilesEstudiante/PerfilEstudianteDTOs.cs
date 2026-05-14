@@ -18,6 +18,8 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public string FotoUrl { get; set; }
         public string EnlaceGitHub { get; set; }
         public string EnlaceLinkedIn { get; set; }
+        public int? CarreraId { get; set; }
+        public bool BuscaEmpleo { get; set; }
 
         public List<EducacionDTO> Educaciones { get; set; } = new List<EducacionDTO>();
         public List<ExperienciaLaboralDTO> ExperienciasLaborales { get; set; } = new List<ExperienciaLaboralDTO>();
@@ -70,5 +72,7 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public string FotoUrl { get; set; }
         public string EnlaceGitHub { get; set; }
         public string EnlaceLinkedIn { get; set; }
+        public int? CarreraId { get; set; }
+        public bool BuscaEmpleo { get; set; }
     }
 }

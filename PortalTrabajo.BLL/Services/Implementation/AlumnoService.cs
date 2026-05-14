@@ -16,6 +16,7 @@ namespace PortalTrabajo.BLL.Services.Implementation
         private readonly IGenericRepository<Usuario> _usuarioRepo;
         private readonly IGenericRepository<PerfilesEstudiante> _perfilRepo;
         private readonly IGenericRepository<CatRole> _rolRepo;
+        private readonly IGenericRepository<CatCarrera> _carreraRepo;
         private readonly IMapper _mapper;
 
         public AlumnoService(
@@ -23,12 +24,14 @@ namespace PortalTrabajo.BLL.Services.Implementation
             IGenericRepository<Usuario> usuarioRepo,
             IGenericRepository<PerfilesEstudiante> perfilRepo,
             IGenericRepository<CatRole> rolRepo,
+            IGenericRepository<CatCarrera> carreraRepo,
             IMapper mapper)
         {
             _alumnoRepo = alumnoRepo;
             _usuarioRepo = usuarioRepo;
             _perfilRepo = perfilRepo;
             _rolRepo = rolRepo;
+            _carreraRepo = carreraRepo;
             _mapper = mapper;
         }
 
@@ -86,6 +89,18 @@ namespace PortalTrabajo.BLL.Services.Implementation
 
             await _usuarioRepo.Create(nuevoUsuario);
 
+            // Buscar Carrera
+            var carreraStr = alumnoDb.Carrera;
+            int? carreraIdAsignada = null;
+            if (!string.IsNullOrEmpty(carreraStr))
+            {
+                var carreraDb = await _carreraRepo.Get(c => c.Nombre.Contains(carreraStr) || carreraStr.Contains(c.Nombre));
+                if (carreraDb != null)
+                {
+                    carreraIdAsignada = carreraDb.Id;
+                }
+            }
+
             // 4. Crear el PerfilEstudiante
             var nuevoPerfil = new PerfilesEstudiante
             {
@@ -93,7 +108,9 @@ namespace PortalTrabajo.BLL.Services.Implementation
                 Carnet = alumnoDb.Carnet,
                 Nombres = alumnoDb.Nombres,
                 Apellidos = alumnoDb.Apellidos,
-                Genero = alumnoDb.Genero
+                Genero = alumnoDb.Genero,
+                CarreraId = carreraIdAsignada,
+                BuscaEmpleo = true
                 // Si la tabla tuviera FechaNacimiento, se mapearía aquí. 
             };
 

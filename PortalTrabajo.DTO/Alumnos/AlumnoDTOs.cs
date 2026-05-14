@@ -24,6 +24,5 @@ namespace PortalTrabajo.DTO.Alumnos
     {
         public string Carnet { get; set; }
         public string PasswordPortal { get; set; }
-        // Puedes agregar campos como Email si el estudiante lo ingresa en el registro
     }
 }

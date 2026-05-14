@@ -78,7 +78,8 @@ namespace PortalTrabajo.Utility
             CreateMap<OfertasLaborale, OfertaLaboralDTO>()
                 .ForMember(destino => destino.EmpresaNombre, opt => opt.MapFrom(origen => origen.Empresa.NombreComercial))
                 .ForMember(destino => destino.EmpresaLogoUrl, opt => opt.MapFrom(origen => origen.Empresa.LogoUrl))
-                .ForMember(destino => destino.ModalidadNombre, opt => opt.MapFrom(origen => origen.Modalidad.Nombre));
+                .ForMember(destino => destino.ModalidadNombre, opt => opt.MapFrom(origen => origen.Modalidad.Nombre))
+                .ForMember(destino => destino.Carreras, opt => opt.MapFrom(origen => origen.Carreras.Select(c => c.Nombre).ToList()));
 
             CreateMap<OfertaLaboralCreateDTO, OfertasLaborale>();
             CreateMap<OfertaLaboralUpdateDTO, OfertasLaborale>();
@@ -86,6 +87,7 @@ namespace PortalTrabajo.Utility
 
             #region Catalogos
             CreateMap<CatRole, CatalogDTO>().ReverseMap();
+            CreateMap<CatCarrera, CatalogDTO>().ReverseMap();
             CreateMap<CatModalidade, CatalogDTO>().ReverseMap();
             CreateMap<CatGradosAcademico, CatalogDTO>().ReverseMap();
             CreateMap<CatNivelesIdioma, CatalogDTO>().ReverseMap();

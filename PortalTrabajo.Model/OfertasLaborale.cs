@@ -36,4 +36,6 @@ public partial class OfertasLaborale
     public virtual CatModalidade Modalidad { get; set; } = null!;
 
     public virtual ICollection<OfertaHabilidade> OfertaHabilidades { get; set; } = new List<OfertaHabilidade>();
+
+    public virtual ICollection<CatCarrera> Carreras { get; set; } = new List<CatCarrera>();
 }

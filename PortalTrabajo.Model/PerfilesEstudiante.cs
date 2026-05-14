@@ -35,6 +35,12 @@ public partial class PerfilesEstudiante
 
     public DateTime? FechaActualizacion { get; set; }
 
+    public int? CarreraId { get; set; }
+
+    public bool BuscaEmpleo { get; set; }
+
+    public virtual CatCarrera? Carrera { get; set; }
+
     public virtual ICollection<Educacion> Educacions { get; set; } = new List<Educacion>();
 
     public virtual ICollection<EstudianteHabilidade> EstudianteHabilidades { get; set; } = new List<EstudianteHabilidade>();

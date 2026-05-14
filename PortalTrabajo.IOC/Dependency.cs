@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PortalTrabajo.DAL.DBConext;
+using PortalTrabajo.Model;
 using PortalTrabajo.DAL.Repositories.Implementation;
 using PortalTrabajo.DAL.Repositories.Contract;
 using System;
@@ -29,6 +29,7 @@ namespace PortalTrabajo.IOC
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IOfertaLaboralService, PortalTrabajo.BLL.Services.Implementation.OfertaLaboralService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IAuthService, PortalTrabajo.BLL.Services.Implementation.AuthService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEmpresaService, PortalTrabajo.BLL.Services.Implementation.EmpresaService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.ICatalogoService, PortalTrabajo.BLL.Services.Implementation.CatalogoService>();
             //Automapper
             services.AddAutoMapper( cfg =>
             {

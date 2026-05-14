@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PortalTrabajo.DAL.Repositories.Contract;
-using PortalTrabajo.DAL.DBConext;
+using PortalTrabajo.Model;
 
 namespace PortalTrabajo.DAL.Repositories.Implementation
 {

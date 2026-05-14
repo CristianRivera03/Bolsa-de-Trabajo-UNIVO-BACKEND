@@ -6,6 +6,7 @@ using PortalTrabajo.DTO.OfertasLaborales;
 using PortalTrabajo.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PortalTrabajo.BLL.Services.Implementation
@@ -14,12 +15,14 @@ namespace PortalTrabajo.BLL.Services.Implementation
     {
         private readonly IGenericRepository<OfertasLaborale> _ofertaRepositorio;
         private readonly IGenericRepository<Empresa> _empresaRepositorio;
+        private readonly IGenericRepository<CatCarrera> _carreraRepositorio;
         private readonly IMapper _mapper;
 
-        public OfertaLaboralService(IGenericRepository<OfertasLaborale> ofertaRepositorio, IGenericRepository<Empresa> empresaRepositorio, IMapper mapper)
+        public OfertaLaboralService(IGenericRepository<OfertasLaborale> ofertaRepositorio, IGenericRepository<Empresa> empresaRepositorio, IGenericRepository<CatCarrera> carreraRepositorio, IMapper mapper)
         {
             _ofertaRepositorio = ofertaRepositorio;
             _empresaRepositorio = empresaRepositorio;
+            _carreraRepositorio = carreraRepositorio;
             _mapper = mapper;
         }
 
@@ -31,6 +34,7 @@ namespace PortalTrabajo.BLL.Services.Implementation
                 var listaOfertas = await query
                     .Include(o => o.Empresa)
                     .Include(o => o.Modalidad)
+                    .Include(o => o.Carreras)
                     .ToListAsync();
                 
                 return _mapper.Map<List<OfertaLaboralDTO>>(listaOfertas);
@@ -50,6 +54,11 @@ namespace PortalTrabajo.BLL.Services.Implementation
                     throw new Exception("No se encontró un perfil de empresa asociado a este usuario.");
 
                 var dbModelo = _mapper.Map<OfertasLaborale>(modelo);
+
+                if (modelo.CarreraIds != null && modelo.CarreraIds.Any())
+                {
+                    dbModelo.Carreras = await _carreraRepositorio.Query(c => modelo.CarreraIds.Contains(c.Id)).ToListAsync();
+                }
 
                 dbModelo.EmpresaId = empresaReal.Id;
 
