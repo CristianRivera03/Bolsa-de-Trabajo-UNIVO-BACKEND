@@ -7,6 +7,7 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public int Id { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
+        public string? Requisitos { get; set; }
         public int EmpresaId { get; set; }
         public string EmpresaNombre { get; set; }
         public string EmpresaLogoUrl { get; set; }
@@ -18,6 +19,19 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public DateTime? FechaPublicacion { get; set; }
         public DateTime? FechaExpiracion { get; set; }
         public bool? Activa { get; set; }
+        public int? Vacantes { get; set; }
+        public int? EdadMin { get; set; }
+        public int? EdadMax { get; set; }
+        public bool? TieneVehiculo { get; set; }
+        public int? LicenciaId { get; set; }
+        public string LicenciaNombre { get; set; }
+        public int? TipoContratoId { get; set; }
+        public string TipoContratoNombre { get; set; }
+        public int? MunicipioId { get; set; }
+        public string MunicipioNombre { get; set; }
+        public int? GeneroId { get; set; }
+        public string GeneroNombre { get; set; }
+
         public List<string> Carreras { get; set; } = new List<string>();
     }
 
@@ -32,6 +46,15 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public decimal? SalarioMin { get; set; }
         public decimal? SalarioMax { get; set; }
         public DateTime? FechaExpiracion { get; set; }
+        public int? Vacantes { get; set; }
+        public int? EdadMin { get; set; }
+        public int? EdadMax { get; set; }
+        public bool? TieneVehiculo { get; set; }
+        public int? LicenciaId { get; set; }
+        public int? TipoContratoId { get; set; }
+        public int? MunicipioId { get; set; }
+        public int? GeneroId { get; set; }
+
         public List<int> CarreraIds { get; set; } = new List<int>();
     }
 
@@ -45,6 +68,14 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public decimal? SalarioMax { get; set; }
         public DateTime? FechaExpiracion { get; set; }
         public bool? Activa { get; set; }
+        public int? Vacantes { get; set; }
+        public int? EdadMin { get; set; }
+        public int? EdadMax { get; set; }
+        public bool? TieneVehiculo { get; set; }
+        public int? LicenciaId { get; set; }
+        public int? TipoContratoId { get; set; }
+        public int? MunicipioId { get; set; }
+        public int? GeneroId { get; set; }
         public List<int> CarreraIds { get; set; } = new List<int>();
     }
 }

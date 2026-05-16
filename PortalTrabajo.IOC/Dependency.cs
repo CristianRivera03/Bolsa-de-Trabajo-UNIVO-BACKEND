@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using PortalTrabajo.Utility;
+using PortalTrabajo.BLL.BackgroundServices;
+using PortalTrabajo.DAL.DBContext;
 
 namespace PortalTrabajo.IOC
 {
@@ -30,6 +32,12 @@ namespace PortalTrabajo.IOC
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IAuthService, PortalTrabajo.BLL.Services.Implementation.AuthService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEmpresaService, PortalTrabajo.BLL.Services.Implementation.EmpresaService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.ICatalogoService, PortalTrabajo.BLL.Services.Implementation.CatalogoService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IPerfilEstudianteService, PortalTrabajo.BLL.Services.Implementation.PerfilEstudianteService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IPostulacionService, PortalTrabajo.BLL.Services.Implementation.PostulacionService>();
+            
+            //BackgroundServices
+            services.AddHostedService<OfertasExpiracionService>();
+
             //Automapper
             services.AddAutoMapper( cfg =>
             {

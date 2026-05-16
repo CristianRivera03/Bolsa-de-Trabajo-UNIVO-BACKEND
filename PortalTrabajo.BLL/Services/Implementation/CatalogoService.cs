@@ -18,6 +18,14 @@ namespace PortalTrabajo.BLL.Services.Implementation
         private readonly IGenericRepository<CatGradosAcademico> _gradoAcademicoRepo;
         private readonly IGenericRepository<CatRole> _rolRepo;
         private readonly IGenericRepository<CatEstadosPostulacion> _estadoPostulacionRepo;
+        
+        // Nuevos repositorios
+        private readonly IGenericRepository<CatDepartamento> _departamentoRepo;
+        private readonly IGenericRepository<CatMunicipio> _municipioRepo;
+        private readonly IGenericRepository<CatTiposContrato> _tipoContratoRepo;
+        private readonly IGenericRepository<CatTiposLicencium> _tipoLicenciaRepo;
+        private readonly IGenericRepository<CatGenero> _generoRepo;
+
         private readonly IMapper _mapper;
 
         public CatalogoService(
@@ -27,6 +35,11 @@ namespace PortalTrabajo.BLL.Services.Implementation
             IGenericRepository<CatGradosAcademico> gradoAcademicoRepo,
             IGenericRepository<CatRole> rolRepo,
             IGenericRepository<CatEstadosPostulacion> estadoPostulacionRepo,
+            IGenericRepository<CatDepartamento> departamentoRepo,
+            IGenericRepository<CatMunicipio> municipioRepo,
+            IGenericRepository<CatTiposContrato> tipoContratoRepo,
+            IGenericRepository<CatTiposLicencium> tipoLicenciaRepo,
+            IGenericRepository<CatGenero> generoRepo,
             IMapper mapper)
         {
             _carreraRepo = carreraRepo;
@@ -35,6 +48,11 @@ namespace PortalTrabajo.BLL.Services.Implementation
             _gradoAcademicoRepo = gradoAcademicoRepo;
             _rolRepo = rolRepo;
             _estadoPostulacionRepo = estadoPostulacionRepo;
+            _departamentoRepo = departamentoRepo;
+            _municipioRepo = municipioRepo;
+            _tipoContratoRepo = tipoContratoRepo;
+            _tipoLicenciaRepo = tipoLicenciaRepo;
+            _generoRepo = generoRepo;
             _mapper = mapper;
         }
 
@@ -71,6 +89,36 @@ namespace PortalTrabajo.BLL.Services.Implementation
         public async Task<List<CatalogDTO>> ObtenerRoles()
         {
             var query = await _rolRepo.Query().ToListAsync();
+            return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<List<CatalogDTO>> ObtenerDepartamentos()
+        {
+            var query = await _departamentoRepo.Query().ToListAsync();
+            return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<List<CatalogDTO>> ObtenerMunicipios(int departamentoId)
+        {
+            var query = await _municipioRepo.Query(m => m.DepartamentoId == departamentoId).ToListAsync();
+            return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<List<CatalogDTO>> ObtenerTiposContrato()
+        {
+            var query = await _tipoContratoRepo.Query().ToListAsync();
+            return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<List<CatalogDTO>> ObtenerTiposLicencia()
+        {
+            var query = await _tipoLicenciaRepo.Query().ToListAsync();
+            return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<List<CatalogDTO>> ObtenerGeneros()
+        {
+            var query = await _generoRepo.Query().ToListAsync();
             return _mapper.Map<List<CatalogDTO>>(query);
         }
     }

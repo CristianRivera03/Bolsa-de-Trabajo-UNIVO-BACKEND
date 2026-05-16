@@ -59,5 +59,43 @@ namespace PortalTrabajo.API.Controllers
             }
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> ObtenerPorId(int id)
+        {
+            try
+            {
+                var oferta = await _ofertaService.ObtenerPorId(id);
+
+                // Si el servicio devuelve null, significa que no existe
+                if (oferta == null)
+                {
+                    return NotFound(new
+                    {
+                        status = false,
+                        value = (OfertaLaboralDTO)null,
+                        msg = $"No se encontró ninguna oferta con el ID {id}"
+                    });
+                }
+
+                // Si la encuentra, la devuelve con status 200 (OK)
+                return Ok(new
+                {
+                    status = true,
+                    value = oferta,
+                    msg = "Oferta obtenida con éxito"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = false,
+                    value = (OfertaLaboralDTO)null,
+                    msg = ex.Message
+                });
+            }
+        }
+
+
     }
 }

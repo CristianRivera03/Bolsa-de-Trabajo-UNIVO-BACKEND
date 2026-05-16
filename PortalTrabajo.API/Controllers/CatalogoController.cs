@@ -88,5 +88,75 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
+
+        [HttpGet("departamentos")]
+        public async Task<IActionResult> ObtenerDepartamentos()
+        {
+            try
+            {
+                var response = await _catalogoService.ObtenerDepartamentos();
+                return Ok(new Response<List<CatalogDTO>> { status = true, value = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
+            }
+        }
+
+        [HttpGet("municipios/{departamentoId}")]
+        public async Task<IActionResult> ObtenerMunicipios(int departamentoId)
+        {
+            try
+            {
+                var response = await _catalogoService.ObtenerMunicipios(departamentoId);
+                return Ok(new Response<List<CatalogDTO>> { status = true, value = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
+            }
+        }
+
+        [HttpGet("tipos-contrato")]
+        public async Task<IActionResult> ObtenerTiposContrato()
+        {
+            try
+            {
+                var response = await _catalogoService.ObtenerTiposContrato();
+                return Ok(new Response<List<CatalogDTO>> { status = true, value = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
+            }
+        }
+
+        [HttpGet("tipos-licencia")]
+        public async Task<IActionResult> ObtenerTiposLicencia()
+        {
+            try
+            {
+                var response = await _catalogoService.ObtenerTiposLicencia();
+                return Ok(new Response<List<CatalogDTO>> { status = true, value = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
+            }
+        }
+
+        [HttpGet("generos")]
+        public async Task<IActionResult> ObtenerGeneros()
+        {
+            try
+            {
+                var response = await _catalogoService.ObtenerGeneros();
+                return Ok(new Response<List<CatalogDTO>> { status = true, value = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
+            }
+        }
     }
 }

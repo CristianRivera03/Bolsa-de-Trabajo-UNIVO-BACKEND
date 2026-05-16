@@ -35,6 +35,11 @@ namespace PortalTrabajo.BLL.Services.Implementation
                     .Include(o => o.Empresa)
                     .Include(o => o.Modalidad)
                     .Include(o => o.Carreras)
+                    .Include(o => o.Genero)
+                    .Include(o => o.Municipio)
+                    .Include(o => o.Licencia)
+                    .Include(o => o.TipoContrato)
+                    .Where(o => o.Activa == true)
                     .ToListAsync();
                 
                 return _mapper.Map<List<OfertaLaboralDTO>>(listaOfertas);
@@ -76,6 +81,66 @@ namespace PortalTrabajo.BLL.Services.Implementation
             {
                 var mensajeError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
                 throw new Exception($"Error DB: {mensajeError}");
+            }
+        }
+
+        public async Task<bool> DesactivarOfertasExpiradas()
+        {
+            try
+            {
+                var fechaActual = DateTime.Now;
+
+                var ofertasVencidas = await _ofertaRepositorio.Query( o =>
+                    o.Activa == true &&
+                    o.FechaExpiracion != null &&
+                    o.FechaExpiracion <= fechaActual
+                    ).ToListAsync();
+                
+
+                if (ofertasVencidas.Any())
+                {
+                    foreach (var oferta in ofertasVencidas)
+                    {
+                        oferta.Activa = false;
+                        oferta.FechaActualizacion = fechaActual;
+                        await _ofertaRepositorio.Update(oferta);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al desactivar ofertas expiradas", ex);
+            }
+        }
+
+        public async Task<OfertaLaboralDTO> ObtenerPorId(int id){
+            try
+            {
+                var query = _ofertaRepositorio.Query();
+
+                var ofertaEncontrada = await query
+                    .Include(o => o.Empresa)
+                    .Include(o => o.Modalidad)
+                    .Include(o => o.Carreras)
+                    .Include(o => o.Genero)
+                    .Include(o => o.Municipio)
+                    .ThenInclude(m => m.Departamento) 
+                    .Include(o => o.Licencia)
+                    .Include(o => o.TipoContrato)
+                    .FirstOrDefaultAsync(o => o.Id == id); 
+
+                if (ofertaEncontrada == null)
+                {
+                    return null; 
+                }
+
+                return _mapper.Map<OfertaLaboralDTO>(ofertaEncontrada);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener la oferta laboral por ID", ex);
             }
         }
     }

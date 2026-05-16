@@ -8,5 +8,7 @@ namespace PortalTrabajo.BLL.Services.Contract
     {
         Task<List<OfertaLaboralDTO>> ObtenerTodos();
         Task<OfertaLaboralDTO> Crear(OfertaLaboralCreateDTO modelo);
+        Task<OfertaLaboralDTO> ObtenerPorId(int id);
+        Task<bool> DesactivarOfertasExpiradas();
     }
 }

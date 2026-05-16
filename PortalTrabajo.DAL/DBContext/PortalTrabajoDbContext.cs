@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using PortalTrabajo.Model;
 
-namespace PortalTrabajo.Model;
+namespace PortalTrabajo.DAL.DBContext;
 
 public partial class PortalTrabajoDbContext : DbContext
 {
@@ -19,15 +20,25 @@ public partial class PortalTrabajoDbContext : DbContext
 
     public virtual DbSet<CatCarrera> CatCarreras { get; set; }
 
+    public virtual DbSet<CatDepartamento> CatDepartamentos { get; set; }
+
     public virtual DbSet<CatEstadosPostulacion> CatEstadosPostulacions { get; set; }
+
+    public virtual DbSet<CatGenero> CatGeneros { get; set; }
 
     public virtual DbSet<CatGradosAcademico> CatGradosAcademicos { get; set; }
 
     public virtual DbSet<CatModalidade> CatModalidades { get; set; }
 
+    public virtual DbSet<CatMunicipio> CatMunicipios { get; set; }
+
     public virtual DbSet<CatNivelesIdioma> CatNivelesIdiomas { get; set; }
 
     public virtual DbSet<CatRole> CatRoles { get; set; }
+
+    public virtual DbSet<CatTiposContrato> CatTiposContratos { get; set; }
+
+    public virtual DbSet<CatTiposLicencium> CatTiposLicencia { get; set; }
 
     public virtual DbSet<Educacion> Educacions { get; set; }
 
@@ -46,6 +57,8 @@ public partial class PortalTrabajoDbContext : DbContext
     public virtual DbSet<OfertasLaborale> OfertasLaborales { get; set; }
 
     public virtual DbSet<PerfilesEstudiante> PerfilesEstudiantes { get; set; }
+
+    public virtual DbSet<Postulacione> Postulaciones { get; set; }
 
     public virtual DbSet<ProyectosEstudiante> ProyectosEstudiantes { get; set; }
 
@@ -87,6 +100,13 @@ public partial class PortalTrabajoDbContext : DbContext
             entity.Property(e => e.Nombre).HasMaxLength(150);
         });
 
+        modelBuilder.Entity<CatDepartamento>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CatDepar__3214EC073E894DBC");
+
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<CatEstadosPostulacion>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__CatEstad__3214EC07D59106FC");
@@ -94,6 +114,13 @@ public partial class PortalTrabajoDbContext : DbContext
             entity.ToTable("CatEstadosPostulacion");
 
             entity.Property(e => e.Nombre).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<CatGenero>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CatGener__3214EC071D80B2F5");
+
+            entity.Property(e => e.Nombre).HasMaxLength(20);
         });
 
         modelBuilder.Entity<CatGradosAcademico>(entity =>
@@ -110,6 +137,18 @@ public partial class PortalTrabajoDbContext : DbContext
             entity.Property(e => e.Nombre).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<CatMunicipio>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CatMunic__3214EC074298774A");
+
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+
+            entity.HasOne(d => d.Departamento).WithMany(p => p.CatMunicipios)
+                .HasForeignKey(d => d.DepartamentoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CatMunici__Depar__3E1D39E1");
+        });
+
         modelBuilder.Entity<CatNivelesIdioma>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__CatNivel__3214EC07303040D3");
@@ -122,6 +161,22 @@ public partial class PortalTrabajoDbContext : DbContext
         modelBuilder.Entity<CatRole>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__CatRoles__3214EC072D9429AC");
+
+            entity.Property(e => e.Nombre).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<CatTiposContrato>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CatTipos__3214EC0731A7648D");
+
+            entity.ToTable("CatTiposContrato");
+
+            entity.Property(e => e.Nombre).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<CatTiposLicencium>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CatTipos__3214EC07049DC62F");
 
             entity.Property(e => e.Nombre).HasMaxLength(50);
         });
@@ -240,17 +295,35 @@ public partial class PortalTrabajoDbContext : DbContext
             entity.Property(e => e.FechaPublicacion).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.SalarioMax).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.SalarioMin).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.TieneVehiculo).HasDefaultValue(false);
             entity.Property(e => e.Titulo).HasMaxLength(200);
             entity.Property(e => e.Ubicacion).HasMaxLength(200);
+            entity.Property(e => e.Vacantes).HasDefaultValue(1);
 
             entity.HasOne(d => d.Empresa).WithMany(p => p.OfertasLaborales)
                 .HasForeignKey(d => d.EmpresaId)
                 .HasConstraintName("FK_Ofertas_Empresa");
 
+            entity.HasOne(d => d.Genero).WithMany(p => p.OfertasLaborales)
+                .HasForeignKey(d => d.GeneroId)
+                .HasConstraintName("FK_Ofertas_Genero");
+
+            entity.HasOne(d => d.Licencia).WithMany(p => p.OfertasLaborales)
+                .HasForeignKey(d => d.LicenciaId)
+                .HasConstraintName("FK_Ofertas_Licencia");
+
             entity.HasOne(d => d.Modalidad).WithMany(p => p.OfertasLaborales)
                 .HasForeignKey(d => d.ModalidadId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Ofertas_Modalidad");
+
+            entity.HasOne(d => d.Municipio).WithMany(p => p.OfertasLaborales)
+                .HasForeignKey(d => d.MunicipioId)
+                .HasConstraintName("FK_Ofertas_Muni");
+
+            entity.HasOne(d => d.TipoContrato).WithMany(p => p.OfertasLaborales)
+                .HasForeignKey(d => d.TipoContratoId)
+                .HasConstraintName("FK_Ofertas_Contrato");
 
             entity.HasMany(d => d.Carreras).WithMany(p => p.Oferta)
                 .UsingEntity<Dictionary<string, object>>(
@@ -298,6 +371,35 @@ public partial class PortalTrabajoDbContext : DbContext
             entity.HasOne(d => d.Usuario).WithOne(p => p.PerfilesEstudiante)
                 .HasForeignKey<PerfilesEstudiante>(d => d.UsuarioId)
                 .HasConstraintName("FK_PerfilesEstudiantes_Usuario");
+        });
+
+        modelBuilder.Entity<Postulacione>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Postulac__3214EC079C1BB18B");
+
+            entity.HasIndex(e => new { e.OfertaId, e.PerfilId }, "UQ_Postulacion_Oferta_Perfil").IsUnique();
+
+            entity.Property(e => e.CurriculumUrl).HasMaxLength(2048);
+            entity.Property(e => e.EstadoId).HasDefaultValue(1);
+            entity.Property(e => e.FechaPostulacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Mensaje).HasMaxLength(500);
+
+            entity.HasOne(d => d.Estado).WithMany(p => p.Postulaciones)
+                .HasForeignKey(d => d.EstadoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Postulaciones_Estados");
+
+            entity.HasOne(d => d.Oferta).WithMany(p => p.Postulaciones)
+                .HasForeignKey(d => d.OfertaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Postulaciones_Ofertas");
+
+            entity.HasOne(d => d.Perfil).WithMany(p => p.Postulaciones)
+                .HasForeignKey(d => d.PerfilId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Postulaciones_Perfiles");
         });
 
         modelBuilder.Entity<ProyectosEstudiante>(entity =>

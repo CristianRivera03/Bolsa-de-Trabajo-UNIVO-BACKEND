@@ -11,6 +11,7 @@ using PortalTrabajo.DTO.PerfilesEstudiante;
 using PortalTrabajo.DTO.Empresas;
 using PortalTrabajo.DTO.OfertasLaborales;
 using PortalTrabajo.DTO.Catalogos;
+using PortalTrabajo.DTO.Postulaciones;
 
 namespace PortalTrabajo.Utility
 {
@@ -79,10 +80,22 @@ namespace PortalTrabajo.Utility
                 .ForMember(destino => destino.EmpresaNombre, opt => opt.MapFrom(origen => origen.Empresa.NombreComercial))
                 .ForMember(destino => destino.EmpresaLogoUrl, opt => opt.MapFrom(origen => origen.Empresa.LogoUrl))
                 .ForMember(destino => destino.ModalidadNombre, opt => opt.MapFrom(origen => origen.Modalidad.Nombre))
+                .ForMember(destino => destino.LicenciaNombre, opt => opt.MapFrom(origen => origen.Licencia != null ? origen.Licencia.Nombre : null))
+                .ForMember(destino => destino.TipoContratoNombre, opt => opt.MapFrom(origen => origen.TipoContrato != null ? origen.TipoContrato.Nombre : null))
+                .ForMember(destino => destino.MunicipioNombre, opt => opt.MapFrom(origen => origen.Municipio != null ? origen.Municipio.Nombre : null))
+                .ForMember(destino => destino.GeneroNombre, opt => opt.MapFrom(origen => origen.Genero != null ? origen.Genero.Nombre : null))
                 .ForMember(destino => destino.Carreras, opt => opt.MapFrom(origen => origen.Carreras.Select(c => c.Nombre).ToList()));
 
             CreateMap<OfertaLaboralCreateDTO, OfertasLaborale>();
             CreateMap<OfertaLaboralUpdateDTO, OfertasLaborale>();
+            #endregion
+
+            #region Postulaciones
+            CreateMap<Postulacione, PostulacionDTO>()
+                .ForMember(dest => dest.OfertaTitulo, opt => opt.MapFrom(src => src.Oferta.Titulo))
+                .ForMember(dest => dest.EmpresaNombre, opt => opt.MapFrom(src => src.Oferta.Empresa.NombreComercial))
+                .ForMember(dest => dest.EstudianteNombreCompleto, opt => opt.MapFrom(src => src.Perfil.Nombres + " " + src.Perfil.Apellidos))
+                .ForMember(dest => dest.EstadoNombre, opt => opt.MapFrom(src => src.Estado.Nombre));
             #endregion
 
             #region Catalogos
@@ -93,6 +106,11 @@ namespace PortalTrabajo.Utility
             CreateMap<CatNivelesIdioma, CatalogDTO>().ReverseMap();
             CreateMap<Habilidade, CatalogDTO>().ReverseMap();
             CreateMap<CatEstadosPostulacion, CatalogDTO>().ReverseMap();
+            CreateMap<CatDepartamento, CatalogDTO>().ReverseMap();
+            CreateMap<CatMunicipio, CatalogDTO>().ReverseMap();
+            CreateMap<CatTiposContrato, CatalogDTO>().ReverseMap();
+            CreateMap<CatTiposLicencium, CatalogDTO>().ReverseMap();
+            CreateMap<CatGenero, CatalogDTO>().ReverseMap();
             #endregion
         }
     }

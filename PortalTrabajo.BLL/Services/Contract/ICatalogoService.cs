@@ -12,5 +12,10 @@ namespace PortalTrabajo.BLL.Services.Contract
         Task<List<CatalogDTO>> ObtenerGradosAcademicos();
         Task<List<CatalogDTO>> ObtenerRoles();
         Task<List<CatalogDTO>> ObtenerEstadosPostulacion();
+        Task<List<CatalogDTO>> ObtenerDepartamentos();
+        Task<List<CatalogDTO>> ObtenerMunicipios(int departamentoId);
+        Task<List<CatalogDTO>> ObtenerTiposContrato();
+        Task<List<CatalogDTO>> ObtenerTiposLicencia();
+        Task<List<CatalogDTO>> ObtenerGeneros();
     }
 }

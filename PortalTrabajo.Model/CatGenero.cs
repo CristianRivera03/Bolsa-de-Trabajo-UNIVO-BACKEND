@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace PortalTrabajo.Model;
 
-public partial class CatEstadosPostulacion
+public partial class CatGenero
 {
     public int Id { get; set; }
 
     public string Nombre { get; set; } = null!;
 
-    public virtual ICollection<Postulacione> Postulaciones { get; set; } = new List<Postulacione>();
+    public virtual ICollection<OfertasLaborale> OfertasLaborales { get; set; } = new List<OfertasLaborale>();
 }

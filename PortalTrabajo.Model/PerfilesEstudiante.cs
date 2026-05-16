@@ -49,6 +49,8 @@ public partial class PerfilesEstudiante
 
     public virtual ICollection<ExperienciasLaborale> ExperienciasLaborales { get; set; } = new List<ExperienciasLaborale>();
 
+    public virtual ICollection<Postulacione> Postulaciones { get; set; } = new List<Postulacione>();
+
     public virtual ICollection<ProyectosEstudiante> ProyectosEstudiantes { get; set; } = new List<ProyectosEstudiante>();
 
     public virtual Usuario Usuario { get; set; } = null!;
