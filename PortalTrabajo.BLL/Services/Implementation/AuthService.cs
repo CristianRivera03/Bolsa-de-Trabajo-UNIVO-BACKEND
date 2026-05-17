@@ -6,6 +6,7 @@ using PortalTrabajo.DAL.Repositories.Contract;
 using PortalTrabajo.DTO.Auth;
 using PortalTrabajo.Model;
 using PortalTrabajo.Utility;
+using PortalTrabajo.Utility.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,12 +19,14 @@ namespace PortalTrabajo.BLL.Services.Implementation
         private readonly IGenericRepository<Usuario> _userRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<IAuthService> _logger;
+        private readonly IJwtUtility _jwtUtility;
 
-        public AuthService(IGenericRepository<Usuario> userRepository, IMapper mapper, ILogger<IAuthService> logger)
+        public AuthService(IGenericRepository<Usuario> userRepository, IMapper mapper, ILogger<IAuthService> logger, IJwtUtility jwtUtility)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _logger = logger;
+            _jwtUtility = jwtUtility;
         }
 
         public async Task<SessionDTO> Login(string email, string password)
@@ -43,7 +46,10 @@ namespace PortalTrabajo.BLL.Services.Implementation
                     throw new UnauthorizedAccessException("El usuario no existe o la contraseña es incorrecta");
                 }
 
-                return _mapper.Map<SessionDTO>(userFound);
+                var session = _mapper.Map<SessionDTO>(userFound);
+                session.Token = _jwtUtility.GenerarJWT(session);
+
+                return session;
             }
             catch (Exception ex)
             {

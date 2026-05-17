@@ -10,6 +10,9 @@ using System.Text;
 using PortalTrabajo.Utility;
 using PortalTrabajo.BLL.BackgroundServices;
 using PortalTrabajo.DAL.DBContext;
+using PortalTrabajo.Utility.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PortalTrabajo.IOC
 {
@@ -17,12 +20,41 @@ namespace PortalTrabajo.IOC
     {
         public static void DependencyInjection(this IServiceCollection services , IConfiguration configuration)
         {
-            // Register your dependencies here
+            //Base de datos
             services.AddDbContext<PortalTrabajoDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("connectionDB")
              ));
 
+            //Entorno de cloudnary
+            services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
 
+            //Entorno de JWT
+            services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
+            
+            var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.Key);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings.Audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
             //Repos
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
@@ -45,6 +77,11 @@ namespace PortalTrabajo.IOC
             }, typeof(AutoMapperProfile));
 
 
+            //Cloudinary
+            services.AddScoped<ICloudinaryUtility, CloudinaryUtility>();
+            
+            //JWT
+            services.AddScoped<IJwtUtility, JwtUtility>();
         }
     }
 }

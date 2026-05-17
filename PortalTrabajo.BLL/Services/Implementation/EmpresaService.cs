@@ -7,6 +7,7 @@ using PortalTrabajo.DTO.Empresas;
 using PortalTrabajo.Model;
 using PortalTrabajo.Utility;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PortalTrabajo.BLL.Services.Implementation
@@ -16,12 +17,18 @@ namespace PortalTrabajo.BLL.Services.Implementation
         private readonly IGenericRepository<Empresa> _empresaRepositorio;
         private readonly IGenericRepository<Usuario> _usuarioRepositorio;
         private readonly IMapper _mapper;
+        private readonly PortalTrabajo.Utility.Interfaces.ICloudinaryUtility _cloudinaryUtility;
 
-        public EmpresaService(IGenericRepository<Empresa> empresaRepositorio, IGenericRepository<Usuario> usuarioRepositorio, IMapper mapper)
+        public EmpresaService(
+            IGenericRepository<Empresa> empresaRepositorio, 
+            IGenericRepository<Usuario> usuarioRepositorio, 
+            IMapper mapper,
+            PortalTrabajo.Utility.Interfaces.ICloudinaryUtility cloudinaryUtility)
         {
             _empresaRepositorio = empresaRepositorio;
             _usuarioRepositorio = usuarioRepositorio;
             _mapper = mapper;
+            _cloudinaryUtility = cloudinaryUtility;
         }
 
         public async Task<EmpresaDTO> CrearEmpresa(EmpresaCreateDTO modelo)
@@ -44,6 +51,58 @@ namespace PortalTrabajo.BLL.Services.Implementation
                 throw new Exception("No se pudo completar el registro.");
 
             return _mapper.Map<EmpresaDTO>(usuarioCreado.Empresa);
+        }
+
+        public async Task<EmpresaDTO> ObtenerMiEmpresaAsync(int usuarioId)
+        {
+            var empresa = await _empresaRepositorio.Get(e => e.UsuarioId == usuarioId);
+            if (empresa == null) throw new Exception("Empresa no encontrada.");
+            return _mapper.Map<EmpresaDTO>(empresa);
+        }
+
+        public async Task<EmpresaDTO> ActualizarEmpresaAsync(int usuarioId, EmpresaUpdateDTO dto)
+        {
+            var empresa = await _empresaRepositorio.Get(e => e.UsuarioId == usuarioId);
+            if (empresa == null) throw new Exception("Empresa no encontrada.");
+
+            empresa.NombreComercial = dto.NombreComercial;
+            empresa.Sector = dto.Sector;
+            empresa.SitioWeb = dto.SitioWeb;
+
+            await _empresaRepositorio.Update(empresa);
+
+            return _mapper.Map<EmpresaDTO>(empresa);
+        }
+
+        public async Task<string> CambiarLogoAsync(int usuarioId, PortalTrabajo.DTO.Shared.CambiarImagenDTO dto)
+        {
+            var empresa = await _empresaRepositorio.Get(e => e.UsuarioId == usuarioId);
+            if (empresa == null) throw new Exception("Empresa no encontrada.");
+
+            if (dto.Archivo == null || dto.Archivo.Length == 0)
+                throw new Exception("No se ha proporcionado ninguna imagen.");
+
+            string nuevaUrl = await _cloudinaryUtility.SubirImagenAsync(dto.Archivo, "Empresas");
+            if (string.IsNullOrEmpty(nuevaUrl))
+                throw new Exception("Error al subir el logo a Cloudinary.");
+
+            if (!string.IsNullOrEmpty(empresa.LogoUrl) && empresa.LogoUrl.Contains("cloudinary.com"))
+            {
+                var segments = new Uri(empresa.LogoUrl).Segments;
+                var publicIdWithExtension = string.Join("", segments.Skip(segments.Length - 3));
+                var publicId = System.IO.Path.ChangeExtension(publicIdWithExtension, null).Replace("/", "/");
+                try
+                {
+                    var idToDestroy = publicIdWithExtension.Substring(0, publicIdWithExtension.LastIndexOf('.'));
+                    await _cloudinaryUtility.EliminarImagenAsync(idToDestroy);
+                }
+                catch { }
+            }
+
+            empresa.LogoUrl = nuevaUrl;
+            await _empresaRepositorio.Update(empresa);
+
+            return nuevaUrl;
         }
     }
 }

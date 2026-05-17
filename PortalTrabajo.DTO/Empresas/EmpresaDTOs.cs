@@ -8,6 +8,7 @@ namespace PortalTrabajo.DTO.Empresas
         public int UsuarioId { get; set; }
         public string NombreComercial { get; set; }
         public string Sector { get; set; }
+        public string Descripcion { get; set; }
         public string SitioWeb { get; set; }
         public string LogoUrl { get; set; }
     }
@@ -18,6 +19,7 @@ namespace PortalTrabajo.DTO.Empresas
         public string Password { get; set; }
         public string NombreComercial { get; set; }
         public string Sector { get; set; }
+        public string Descripcion { get; set; }
         public string SitioWeb { get; set; }
     }
 
@@ -25,6 +27,7 @@ namespace PortalTrabajo.DTO.Empresas
     {
         public string NombreComercial { get; set; }
         public string Sector { get; set; }
+        public string Descripcion { get; set; }
         public string SitioWeb { get; set; }
         public string LogoUrl { get; set; }
     }

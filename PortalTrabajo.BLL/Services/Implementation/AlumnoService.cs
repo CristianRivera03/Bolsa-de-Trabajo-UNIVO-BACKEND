@@ -5,6 +5,7 @@ using PortalTrabajo.DTO.Alumnos;
 using PortalTrabajo.DTO.Auth;
 using PortalTrabajo.Model;
 using PortalTrabajo.Utility;
+using PortalTrabajo.Utility.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace PortalTrabajo.BLL.Services.Implementation
         private readonly IGenericRepository<CatRole> _rolRepo;
         private readonly IGenericRepository<CatCarrera> _carreraRepo;
         private readonly IMapper _mapper;
+        private readonly IJwtUtility _jwtUtility;
 
         public AlumnoService(
             IGenericRepository<AlumnosActivo> alumnoRepo,
@@ -25,7 +27,8 @@ namespace PortalTrabajo.BLL.Services.Implementation
             IGenericRepository<PerfilesEstudiante> perfilRepo,
             IGenericRepository<CatRole> rolRepo,
             IGenericRepository<CatCarrera> carreraRepo,
-            IMapper mapper)
+            IMapper mapper,
+            IJwtUtility jwtUtility)
         {
             _alumnoRepo = alumnoRepo;
             _usuarioRepo = usuarioRepo;
@@ -33,6 +36,7 @@ namespace PortalTrabajo.BLL.Services.Implementation
             _rolRepo = rolRepo;
             _carreraRepo = carreraRepo;
             _mapper = mapper;
+            _jwtUtility = jwtUtility;
         }
 
         public async Task<AlumnoActivoDTO> Consultar(VerificarAlumnoDTO model)
@@ -117,13 +121,17 @@ namespace PortalTrabajo.BLL.Services.Implementation
             await _perfilRepo.Create(nuevoPerfil);
 
             // 5. Retornar Sesion
-            return new SessionDTO
+            var session = new SessionDTO
             {
                 UsuarioId = nuevoUsuario.Id,
                 Email = nuevoUsuario.Email,
                 RolName = rol?.Nombre ?? "Estudiante",
-                Token = "token_temporal_hasta_configurar_jwt"
+                NombreCompleto = $"{alumnoDb.Nombres} {alumnoDb.Apellidos}"
             };
+            
+            session.Token = _jwtUtility.GenerarJWT(session);
+            
+            return session;
         }
     }
 }

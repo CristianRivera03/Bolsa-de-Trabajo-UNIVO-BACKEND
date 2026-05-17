@@ -12,7 +12,7 @@ namespace PortalTrabajo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-// [Authorize(Roles = "Estudiante,Alumno")] // Descomentar cuando la auth esté lista
+    [Authorize(Roles = "Estudiante,Alumno")] // Descomentar cuando la auth esté lista
 public class PerfilEstudianteController : ControllerBase
 {
     private readonly IPerfilEstudianteService _perfilService;
@@ -30,9 +30,7 @@ public class PerfilEstudianteController : ControllerBase
             var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(usuarioIdClaim) || !int.TryParse(usuarioIdClaim, out int usuarioId))
             {
-                // TODO: Remover esto y retornar Unauthorized cuando JWT esté 100% integrado
-                // Por ahora asumimos un Id para pruebas si no hay token
-                usuarioId = 1; 
+                return Unauthorized("Token inválido o expirado");
             }
 
             var perfil = await _perfilService.GetPerfilByUsuarioIdAsync(usuarioId);
@@ -52,7 +50,7 @@ public class PerfilEstudianteController : ControllerBase
             var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(usuarioIdClaim) || !int.TryParse(usuarioIdClaim, out int usuarioId))
             {
-                usuarioId = 1; // Id de prueba si no hay token
+                return Unauthorized("Token inválido o expirado");
             }
 
             var perfilActualizado = await _perfilService.UpdatePerfilAsync(usuarioId, dto);
@@ -61,6 +59,26 @@ public class PerfilEstudianteController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, new Response<PerfilEstudianteDTO> { status = false, msg = ex.Message });
+        }
+    }
+
+    [HttpPost("CambiarFoto")]
+    public async Task<IActionResult> CambiarFoto([FromForm] PortalTrabajo.DTO.Shared.CambiarImagenDTO dto)
+    {
+        try
+        {
+            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(usuarioIdClaim) || !int.TryParse(usuarioIdClaim, out int usuarioId))
+            {
+                return Unauthorized("Token inválido o expirado");
+            }
+
+            var nuevaUrl = await _perfilService.CambiarFotoAsync(usuarioId, dto);
+            return Ok(new Response<string> { status = true, value = nuevaUrl });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new Response<string> { status = false, msg = ex.Message });
         }
     }
 }
