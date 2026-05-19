@@ -41,9 +41,12 @@ namespace PortalTrabajo.Utility
             CreateMap<PerfilesEstudiante, PerfilEstudianteDTO>()
                 .ForMember(destino => destino.Educaciones, opt => opt.MapFrom(origen => origen.Educacions))
                 .ForMember(destino => destino.Habilidades, opt => opt.MapFrom(origen => origen.EstudianteHabilidades))
-                .ForMember(destino => destino.Idiomas, opt => opt.MapFrom(origen => origen.EstudianteIdiomas));
+                .ForMember(destino => destino.Idiomas, opt => opt.MapFrom(origen => origen.EstudianteIdiomas))
+                .ForMember(destino => destino.Proyectos, opt => opt.MapFrom(origen => origen.ProyectosEstudiantes))
+                .ForMember(destino => destino.CarreraNombre, opt => opt.MapFrom(origen => origen.Carrera.Nombre)); ;
 
-            CreateMap<PerfilEstudianteUpdateDTO, PerfilesEstudiante>();
+            CreateMap<PerfilEstudianteUpdateDTO, PerfilesEstudiante>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<Educacion, EducacionDTO>()
                 .ForMember(destino => destino.GradoAcademicoNombre, opt => opt.MapFrom(origen => origen.GradoAcademico.Nombre));
@@ -55,6 +58,8 @@ namespace PortalTrabajo.Utility
 
             CreateMap<EstudianteIdioma, EstudianteIdiomaDTO>()
                 .ForMember(destino => destino.NivelNombre, opt => opt.MapFrom(origen => origen.Nivel.Nombre));
+
+            CreateMap<ProyectosEstudiante, ProyectoEstudianteDTO>().ReverseMap();
             #endregion
 
             #region Empresas

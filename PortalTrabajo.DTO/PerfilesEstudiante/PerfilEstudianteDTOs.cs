@@ -19,12 +19,15 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public string EnlaceGitHub { get; set; }
         public string EnlaceLinkedIn { get; set; }
         public int? CarreraId { get; set; }
+        public string CarreraNombre { get; set; }
         public bool BuscaEmpleo { get; set; }
 
         public List<EducacionDTO> Educaciones { get; set; } = new List<EducacionDTO>();
         public List<ExperienciaLaboralDTO> ExperienciasLaborales { get; set; } = new List<ExperienciaLaboralDTO>();
         public List<EstudianteHabilidadDTO> Habilidades { get; set; } = new List<EstudianteHabilidadDTO>();
         public List<EstudianteIdiomaDTO> Idiomas { get; set; } = new List<EstudianteIdiomaDTO>();
+        public List<ProyectoEstudianteDTO> Proyectos { get; set; } = new List<ProyectoEstudianteDTO>();
+
     }
 
     public class EducacionDTO
@@ -47,13 +50,14 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public DateOnly FechaInicio { get; set; }
         public DateOnly? FechaFin { get; set; }
         public bool? EsTrabajoActual { get; set; }
-        public string Descripcion { get; set; }
+        public string DescripcionPuesto { get; set; }
     }
 
     public class EstudianteHabilidadDTO
     {
         public int HabilidadId { get; set; }
         public string NombreHabilidad { get; set; }
+        public int NivelDominio { get; set; }
     }
 
     public class EstudianteIdiomaDTO
@@ -66,13 +70,25 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
 
     public class PerfilEstudianteUpdateDTO
     {
-        public string Telefono { get; set; }
-        public string Direccion { get; set; }
-        public string SobreMi { get; set; }
-        public string FotoUrl { get; set; }
-        public string EnlaceGitHub { get; set; }
-        public string EnlaceLinkedIn { get; set; }
+        public string? Nombres { get; set; }
+        public string? Apellidos { get; set; }
+        public string? Telefono { get; set; }
+        public string? Direccion { get; set; }
+        public string? SobreMi { get; set; }
+        public string? FotoUrl { get; set; }
+        public string? EnlaceGitHub { get; set; }
+        public string? EnlaceLinkedIn { get; set; }
         public int? CarreraId { get; set; }
-        public bool BuscaEmpleo { get; set; }
+        public bool? BuscaEmpleo { get; set; }
+    }
+
+    public class ProyectoEstudianteDTO
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public string TecnologiasUsadas { get; set; }
+        public string EnlaceRepositorio { get; set; }
+        public DateOnly? FechaProyecto { get; set; }
     }
 }

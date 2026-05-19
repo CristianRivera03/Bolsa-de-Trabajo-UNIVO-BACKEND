@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PortalTrabajo.BLL.Services.Contract;
 using PortalTrabajo.DAL.Repositories.Contract;
 using PortalTrabajo.DTO.PerfilesEstudiante;
@@ -26,14 +27,18 @@ public class PerfilEstudianteService : IPerfilEstudianteService
 
     public async Task<PerfilEstudianteDTO> GetPerfilByUsuarioIdAsync(int usuarioId)
     {
-        var perfil = await _perfilRepo.Get(
-            p => p.UsuarioId == usuarioId,
-            p => p.Carrera,
-            p => p.Educacions,
-            p => p.ExperienciasLaborales,
-            p => p.EstudianteHabilidades,
-            p => p.EstudianteIdiomas
-        );
+        var perfil = await _perfilRepo.Query(p => p.UsuarioId == usuarioId)
+            .Include(p => p.Carrera)
+            .Include(p => p.ExperienciasLaborales)
+            .Include(p => p.ProyectosEstudiantes)
+            .Include(p => p.Carrera)
+            .Include(p => p.Educacions)
+                .ThenInclude(e => e.GradoAcademico)
+            .Include(p => p.EstudianteHabilidades)
+                .ThenInclude(h => h.Habilidad)
+            .Include(p => p.EstudianteIdiomas)
+                .ThenInclude(i => i.Nivel)        
+            .FirstOrDefaultAsync();                 
 
         if (perfil == null)
             throw new Exception("Perfil no encontrado para el usuario especificado.");
@@ -43,24 +48,18 @@ public class PerfilEstudianteService : IPerfilEstudianteService
 
     public async Task<PerfilEstudianteDTO> UpdatePerfilAsync(int usuarioId, PerfilEstudianteUpdateDTO dto)
     {
-        var perfil = await _perfilRepo.Get(p => p.UsuarioId == usuarioId);
+        var perfilDb = await _perfilRepo.Get(p => p.UsuarioId == usuarioId);
 
-        if (perfil == null)
-            throw new Exception("Perfil no encontrado.");
+        if (perfilDb == null)
+        {
+            throw new Exception("Perfil no encontrado para este usuario.");
+        }
 
-        perfil.Telefono = dto.Telefono;
-        perfil.Direccion = dto.Direccion;
-        perfil.SobreMi = dto.SobreMi;
-        perfil.FotoUrl = dto.FotoUrl;
-        perfil.EnlaceGitHub = dto.EnlaceGitHub;
-        perfil.EnlaceLinkedIn = dto.EnlaceLinkedIn;
-        perfil.CarreraId = dto.CarreraId;
-        perfil.BuscaEmpleo = dto.BuscaEmpleo;
-        perfil.FechaActualizacion = DateTime.Now;
+        _mapper.Map(dto, perfilDb);
 
-        await _perfilRepo.Update(perfil);
+        await _perfilRepo.Update(perfilDb); 
 
-        return await GetPerfilByUsuarioIdAsync(usuarioId);
+        return _mapper.Map<PerfilEstudianteDTO>(perfilDb);
     }
 
     public async Task<string> CambiarFotoAsync(int usuarioId, PortalTrabajo.DTO.Shared.CambiarImagenDTO dto)

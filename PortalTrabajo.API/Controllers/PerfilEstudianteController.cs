@@ -4,6 +4,7 @@ using PortalTrabajo.API.Utility;
 using PortalTrabajo.BLL.Services.Contract;
 using PortalTrabajo.DTO.PerfilesEstudiante;
 using PortalTrabajo.Utility;
+using PortalTrabajo.Utility.Interfaces;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,10 +17,12 @@ namespace PortalTrabajo.API.Controllers;
 public class PerfilEstudianteController : ControllerBase
 {
     private readonly IPerfilEstudianteService _perfilService;
+    private readonly ICvGeneratorService _cvGeneratorService;
 
-    public PerfilEstudianteController(IPerfilEstudianteService perfilService)
+    public PerfilEstudianteController(IPerfilEstudianteService perfilService, ICvGeneratorService cvGeneratorService)
     {
         _perfilService = perfilService;
+        _cvGeneratorService = cvGeneratorService;
     }
 
     [HttpGet]
@@ -42,7 +45,7 @@ public class PerfilEstudianteController : ControllerBase
         }
     }
 
-    [HttpPut]
+    [HttpPatch]
     public async Task<IActionResult> UpdateMiPerfil([FromBody] PerfilEstudianteUpdateDTO dto)
     {
         try
@@ -81,4 +84,29 @@ public class PerfilEstudianteController : ControllerBase
             return StatusCode(500, new Response<string> { status = false, msg = ex.Message });
         }
     }
+
+    [HttpGet("GenerarCV")]
+    public async Task<IActionResult> DescargarCV()
+    {
+        try
+        {
+            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(claimId, out int usuarioId))
+                return Unauthorized("Token inválido.");
+
+            // 1. Traemos toda la data del estudiante con el método que ya tenías
+            var perfilCompleto = await _perfilService.GetPerfilByUsuarioIdAsync(usuarioId);
+
+            // 2. Generamos los bytes del PDF
+            var pdfBytes = _cvGeneratorService.GenerarCvBasico(perfilCompleto);
+
+            // 3. Retornamos el archivo físicamente
+            return File(pdfBytes, "application/pdf", $"CV_{perfilCompleto.Nombres}.pdf");
+        }
+        catch (System.Exception ex)
+        {
+            return StatusCode(500, new { status = false, msg = ex.Message });
+        }
+    }
+
 }

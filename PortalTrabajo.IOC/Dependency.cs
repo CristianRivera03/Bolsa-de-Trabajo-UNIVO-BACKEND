@@ -66,7 +66,12 @@ namespace PortalTrabajo.IOC
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.ICatalogoService, PortalTrabajo.BLL.Services.Implementation.CatalogoService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IPerfilEstudianteService, PortalTrabajo.BLL.Services.Implementation.PerfilEstudianteService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IPostulacionService, PortalTrabajo.BLL.Services.Implementation.PostulacionService>();
-            
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IExperienciaLaboralService, PortalTrabajo.BLL.Services.Implementation.ExperienciaLaboralService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IProyectosService, PortalTrabajo.BLL.Services.Implementation.ProyectosService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEstudianteIdiomaService, PortalTrabajo.BLL.Services.Implementation.EstudianteIdiomaService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEducacionService, PortalTrabajo.BLL.Services.Implementation.EducacionService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEstudianteHabilidadService, PortalTrabajo.BLL.Services.Implementation.EstudianteHabilidadService>();
+
             //BackgroundServices
             services.AddHostedService<OfertasExpiracionService>();
 
@@ -82,6 +87,9 @@ namespace PortalTrabajo.IOC
             
             //JWT
             services.AddScoped<IJwtUtility, JwtUtility>();
+
+            //CV Generator
+            services.AddScoped<ICvGeneratorService, CvGeneratorService>();
         }
     }
 }
