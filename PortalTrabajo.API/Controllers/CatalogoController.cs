@@ -158,5 +158,19 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
+
+        [HttpGet("habilidades")]
+        public async Task<IActionResult> ObtenerHabilidades()
+        {
+            try
+            {
+                var response = await _catalogoService.ObtenerHabilidades();
+                return Ok(new Response<List<CatalogDTO>> { status = true, value = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
+            }
+        }
     }
 }

@@ -25,22 +25,11 @@ namespace PortalTrabajo.BLL.Services.Implementation
         private readonly IGenericRepository<CatTiposContrato> _tipoContratoRepo;
         private readonly IGenericRepository<CatTiposLicencium> _tipoLicenciaRepo;
         private readonly IGenericRepository<CatGenero> _generoRepo;
+        private readonly IGenericRepository<Habilidade> _habilidadesRepo;
 
         private readonly IMapper _mapper;
 
-        public CatalogoService(
-            IGenericRepository<CatCarrera> carreraRepo,
-            IGenericRepository<CatModalidade> modalidadRepo,
-            IGenericRepository<CatNivelesIdioma> nivelIdiomaRepo,
-            IGenericRepository<CatGradosAcademico> gradoAcademicoRepo,
-            IGenericRepository<CatRole> rolRepo,
-            IGenericRepository<CatEstadosPostulacion> estadoPostulacionRepo,
-            IGenericRepository<CatDepartamento> departamentoRepo,
-            IGenericRepository<CatMunicipio> municipioRepo,
-            IGenericRepository<CatTiposContrato> tipoContratoRepo,
-            IGenericRepository<CatTiposLicencium> tipoLicenciaRepo,
-            IGenericRepository<CatGenero> generoRepo,
-            IMapper mapper)
+        public CatalogoService(IGenericRepository<CatCarrera> carreraRepo, IGenericRepository<CatModalidade> modalidadRepo, IGenericRepository<CatNivelesIdioma> nivelIdiomaRepo, IGenericRepository<CatGradosAcademico> gradoAcademicoRepo, IGenericRepository<CatRole> rolRepo, IGenericRepository<CatEstadosPostulacion> estadoPostulacionRepo, IGenericRepository<CatDepartamento> departamentoRepo, IGenericRepository<CatMunicipio> municipioRepo, IGenericRepository<CatTiposContrato> tipoContratoRepo, IGenericRepository<CatTiposLicencium> tipoLicenciaRepo, IGenericRepository<CatGenero> generoRepo, IGenericRepository<Habilidade> habilidadesRepo, IMapper mapper)
         {
             _carreraRepo = carreraRepo;
             _modalidadRepo = modalidadRepo;
@@ -53,6 +42,7 @@ namespace PortalTrabajo.BLL.Services.Implementation
             _tipoContratoRepo = tipoContratoRepo;
             _tipoLicenciaRepo = tipoLicenciaRepo;
             _generoRepo = generoRepo;
+            _habilidadesRepo = habilidadesRepo;
             _mapper = mapper;
         }
 
@@ -119,6 +109,12 @@ namespace PortalTrabajo.BLL.Services.Implementation
         public async Task<List<CatalogDTO>> ObtenerGeneros()
         {
             var query = await _generoRepo.Query().ToListAsync();
+            return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<List<CatalogDTO>> ObtenerHabilidades()
+        {
+            var query = await _habilidadesRepo.Query().ToListAsync();
             return _mapper.Map<List<CatalogDTO>>(query);
         }
     }

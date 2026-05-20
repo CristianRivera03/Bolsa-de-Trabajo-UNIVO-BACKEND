@@ -66,7 +66,8 @@ public class PerfilEstudianteController : ControllerBase
     }
 
     [HttpPost("CambiarFoto")]
-    public async Task<IActionResult> CambiarFoto([FromForm] PortalTrabajo.DTO.Shared.CambiarImagenDTO dto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> CambiarFoto(IFormFile Archivo) 
     {
         try
         {
@@ -75,6 +76,16 @@ public class PerfilEstudianteController : ControllerBase
             {
                 return Unauthorized("Token inválido o expirado");
             }
+
+            if (Archivo == null || Archivo.Length == 0)
+            {
+                return BadRequest(new Response<string> { status = false, msg = "No se ha enviado ninguna imagen." });
+            }
+
+            var dto = new PortalTrabajo.DTO.Shared.CambiarImagenDTO
+            {
+                Archivo = Archivo
+            };
 
             var nuevaUrl = await _perfilService.CambiarFotoAsync(usuarioId, dto);
             return Ok(new Response<string> { status = true, value = nuevaUrl });
@@ -94,13 +105,11 @@ public class PerfilEstudianteController : ControllerBase
             if (!int.TryParse(claimId, out int usuarioId))
                 return Unauthorized("Token inválido.");
 
-            // 1. Traemos toda la data del estudiante con el método que ya tenías
             var perfilCompleto = await _perfilService.GetPerfilByUsuarioIdAsync(usuarioId);
 
-            // 2. Generamos los bytes del PDF
-            var pdfBytes = _cvGeneratorService.GenerarCvBasico(perfilCompleto);
+            // AHORA ES AWAIT
+            var pdfBytes = await _cvGeneratorService.GenerarCvUnivoAsync(perfilCompleto);
 
-            // 3. Retornamos el archivo físicamente
             return File(pdfBytes, "application/pdf", $"CV_{perfilCompleto.Nombres}.pdf");
         }
         catch (System.Exception ex)

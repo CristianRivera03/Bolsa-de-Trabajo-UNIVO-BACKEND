@@ -17,5 +17,6 @@ namespace PortalTrabajo.BLL.Services.Contract
         Task<List<CatalogDTO>> ObtenerTiposContrato();
         Task<List<CatalogDTO>> ObtenerTiposLicencia();
         Task<List<CatalogDTO>> ObtenerGeneros();
+        Task<List<CatalogDTO>> ObtenerHabilidades();
     }
 }

@@ -7,6 +7,6 @@ namespace PortalTrabajo.Utility.Interfaces
 {
     public interface ICvGeneratorService
     {
-        byte[] GenerarCvBasico(PerfilEstudianteDTO perfil);
+        Task<byte[]> GenerarCvUnivoAsync(PerfilEstudianteDTO perfil);
     }
 }
