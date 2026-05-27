@@ -1,11 +1,10 @@
-Ôªøusing Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PortalTrabajo.BLL.Services.Contract;
 using PortalTrabajo.DTO.PerfilesEstudiante;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
 namespace PortalTrabajo.API.Controllers
 {
     [Route("api/PerfilEstudiante/Habilidades")]
@@ -14,12 +13,10 @@ namespace PortalTrabajo.API.Controllers
     public class EstudianteHabilidadController : ControllerBase
     {
         private readonly IEstudianteHabilidadService _habilidadService;
-
         public EstudianteHabilidadController(IEstudianteHabilidadService habilidadService)
         {
             _habilidadService = habilidadService;
         }
-
         [HttpPost]
         public async Task<IActionResult> Agregar([FromBody] EstudianteHabilidadDTO dto)
         {
@@ -27,17 +24,15 @@ namespace PortalTrabajo.API.Controllers
             {
                 var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!int.TryParse(claimId, out int usuarioId))
-                    return Unauthorized(new { status = false, msg = "Token inv√°lido." });
-
+                    return Unauthorized(new { status = false, msg = "Token inv·lido." });
                 var resultado = await _habilidadService.AddHabilidadAsync(usuarioId, dto);
-                return Ok(new { status = resultado, msg = "Habilidad agregada con √©xito." });
+                return Ok(new { status = resultado, msg = "Habilidad agregada con Èxito." });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { status = false, msg = ex.Message });
             }
         }
-
         [HttpPut("{habilidadId}")]
         public async Task<IActionResult> Editar(int habilidadId, [FromBody] EstudianteHabilidadDTO dto)
         {
@@ -45,17 +40,15 @@ namespace PortalTrabajo.API.Controllers
             {
                 var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!int.TryParse(claimId, out int usuarioId))
-                    return Unauthorized(new { status = false, msg = "Token inv√°lido." });
-
+                    return Unauthorized(new { status = false, msg = "Token inv·lido." });
                 var resultado = await _habilidadService.UpdateHabilidadAsync(usuarioId, habilidadId, dto);
-                return Ok(new { status = resultado, msg = "Habilidad actualizada con √©xito." });
+                return Ok(new { status = resultado, msg = "Habilidad actualizada con Èxito." });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { status = false, msg = ex.Message });
             }
         }
-
         [HttpDelete("{habilidadId}")]
         public async Task<IActionResult> Eliminar(int habilidadId)
         {
@@ -63,8 +56,7 @@ namespace PortalTrabajo.API.Controllers
             {
                 var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!int.TryParse(claimId, out int usuarioId))
-                    return Unauthorized(new { status = false, msg = "Token inv√°lido." });
-
+                    return Unauthorized(new { status = false, msg = "Token inv·lido." });
                 var resultado = await _habilidadService.DeleteHabilidadAsync(usuarioId, habilidadId);
                 return Ok(new { status = resultado, msg = "Habilidad eliminada." });
             }

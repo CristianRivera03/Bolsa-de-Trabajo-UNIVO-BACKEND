@@ -1,5 +1,4 @@
 using System;
-
 namespace PortalTrabajo.DTO.OfertasLaborales
 {
     public class OfertaLaboralDTO
@@ -27,14 +26,19 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public string LicenciaNombre { get; set; }
         public int? TipoContratoId { get; set; }
         public string TipoContratoNombre { get; set; }
-        public int? MunicipioId { get; set; }
-        public string MunicipioNombre { get; set; }
+        public int? DistritoId { get; set; }
+        public string DistritoNombre { get; set; }
         public int? GeneroId { get; set; }
         public string GeneroNombre { get; set; }
-
         public List<string> Carreras { get; set; } = new List<string>();
+        public List<OfertaHabilidadDTO> Habilidades { get; set; } = new List<OfertaHabilidadDTO>();
     }
-
+    public class OfertaHabilidadDTO
+    {
+        public int HabilidadId { get; set; }
+        public string NombreHabilidad { get; set; }
+        public bool EsObligatorio { get; set; }
+    }
     public class OfertaLaboralCreateDTO
     {
         public int EmpresaId { get; set; }
@@ -52,12 +56,11 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public bool? TieneVehiculo { get; set; }
         public int? LicenciaId { get; set; }
         public int? TipoContratoId { get; set; }
-        public int? MunicipioId { get; set; }
+        public int? DistritoId { get; set; }
         public int? GeneroId { get; set; }
-
         public List<int> CarreraIds { get; set; } = new List<int>();
+        public List<int> HabilidadIds { get; set; } = new List<int>();
     }
-
     public class OfertaLaboralUpdateDTO
     {
         public string Titulo { get; set; }
@@ -74,8 +77,9 @@ namespace PortalTrabajo.DTO.OfertasLaborales
         public bool? TieneVehiculo { get; set; }
         public int? LicenciaId { get; set; }
         public int? TipoContratoId { get; set; }
-        public int? MunicipioId { get; set; }
+        public int? DistritoId { get; set; }
         public int? GeneroId { get; set; }
         public List<int> CarreraIds { get; set; } = new List<int>();
+        public List<int> HabilidadIds { get; set; } = new List<int>();
     }
 }

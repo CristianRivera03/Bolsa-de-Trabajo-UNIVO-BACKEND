@@ -1,65 +1,99 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PortalTrabajo.API.Utility;
 using PortalTrabajo.BLL.Services.Contract;
 using PortalTrabajo.DTO.Postulaciones;
-using PortalTrabajo.Utility;
+using PortalTrabajo.Utility.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
-namespace PortalTrabajo.API.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-// [Authorize(Roles = "Estudiante,Alumno")]
-public class PostulacionController : ControllerBase
+namespace PortalTrabajo.API.Controllers
 {
-    private readonly IPostulacionService _postulacionService;
-
-    public PostulacionController(IPostulacionService postulacionService)
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize] 
+    public class PostulacionController : ControllerBase
     {
-        _postulacionService = postulacionService;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Postularse([FromBody] CreatePostulacionDTO dto)
-    {
-        try
+        private readonly IPostulacionService _postulacionService;
+        private readonly IPerfilEstudianteService _perfilEstudianteService;
+        private readonly ICvGeneratorService _cvGeneratorService;
+        public PostulacionController(
+            IPostulacionService postulacionService,
+            IPerfilEstudianteService perfilEstudianteService,
+            ICvGeneratorService cvGeneratorService)
         {
-            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(usuarioIdClaim) || !int.TryParse(usuarioIdClaim, out int usuarioId))
+            _postulacionService = postulacionService;
+            _perfilEstudianteService = perfilEstudianteService;
+            _cvGeneratorService = cvGeneratorService;
+        }
+        [HttpPost("Aplicar")]
+        public async Task<IActionResult> Aplicar([FromBody] CreatePostulacionDTO dto)
+        {
+            try
             {
-                usuarioId = 1; // Id de prueba
+                var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(claimId, out int usuarioId))
+                    return Unauthorized(new { status = false, msg = "Token inválido." });
+                var resultado = await _postulacionService.AplicarOfertaAsync(usuarioId, dto);
+                if (resultado)
+                    return Ok(new { status = true, msg = "Postulación enviada exitosamente." });
+                else
+                    return BadRequest(new { status = false, msg = "No se pudo procesar la postulación." });
             }
-
-            var result = await _postulacionService.PostularseAsync(usuarioId, dto);
-            return Ok(new Response<PostulacionDTO> { status = true, value = result });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new Response<PostulacionDTO> { status = false, msg = ex.Message });
-        }
-    }
-
-    [HttpGet("MisPostulaciones")]
-    public async Task<IActionResult> GetMisPostulaciones()
-    {
-        try
-        {
-            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(usuarioIdClaim) || !int.TryParse(usuarioIdClaim, out int usuarioId))
+            catch (Exception ex)
             {
-                usuarioId = 1; // Id de prueba
+                return BadRequest(new { status = false, msg = ex.Message });
             }
-
-            var result = await _postulacionService.GetPostulacionesPorUsuarioAsync(usuarioId);
-            return Ok(new Response<IEnumerable<PostulacionDTO>> { status = true, value = result });
         }
-        catch (Exception ex)
+        [HttpGet("MisPostulaciones")]
+        public async Task<IActionResult> MisPostulaciones()
         {
-            return StatusCode(500, new Response<IEnumerable<PostulacionDTO>> { status = false, msg = ex.Message });
+            try
+            {
+                var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(claimId, out int usuarioId))
+                    return Unauthorized(new { status = false, msg = "Token inválido." });
+                var postulaciones = await _postulacionService.ObtenerMisPostulacionesAsync(usuarioId);
+                return Ok(new { status = true, value = postulaciones });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = false, msg = ex.Message });
+            }
+        }
+        [HttpGet("Oferta/{ofertaId}")]
+        [Authorize(Roles = "Empresa")]
+        public async Task<IActionResult> GetPostulacionesPorOferta(int ofertaId)
+        {
+            try
+            {
+                var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(claimId, out int usuarioEmpresaId))
+                    return Unauthorized(new { status = false, msg = "Token inválido." });
+                var postulaciones = await _postulacionService.ObtenerPostulacionesPorOfertaAsync(ofertaId, usuarioEmpresaId);
+                return Ok(new { status = true, value = postulaciones });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = false, msg = "Ocurrió un error al obtener los candidatos: " + ex.Message });
+            }
+        }
+        [HttpGet("CV/{perfilId}")]
+        [Authorize(Roles = "Empresa")]
+        public async Task<IActionResult> DescargarCVEstudiante(int perfilId)
+        {
+            try
+            {
+                var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(claimId, out int usuarioEmpresaId))
+                    return Unauthorized(new { status = false, msg = "Token inválido." });
+                var perfilCompleto = await _perfilEstudianteService.GetPerfilByPerfilIdAsync(perfilId);
+                var pdfBytes = await _cvGeneratorService.GenerarCvUnivoAsync(perfilCompleto);
+                return File(pdfBytes, "application/pdf", $"CV_{perfilCompleto.Nombres}_{perfilCompleto.Apellidos}.pdf");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = false, msg = "Ocurrió un error al generar el CV del estudiante: " + ex.Message });
+            }
         }
     }
 }

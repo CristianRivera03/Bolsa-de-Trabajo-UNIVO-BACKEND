@@ -6,7 +6,6 @@ using PortalTrabajo.DTO.Alumnos;
 using PortalTrabajo.DTO.Auth;
 using System;
 using System.Threading.Tasks;
-
 namespace PortalTrabajo.API.Controllers
 {
     [Route("api/[controller]")]
@@ -14,12 +13,10 @@ namespace PortalTrabajo.API.Controllers
     public class AlumnoController : ControllerBase
     {
         private readonly IAlumnoService _alumnoService;
-
         public AlumnoController(IAlumnoService alumnoService)
         {
             _alumnoService = alumnoService;
         }
-
         [HttpPost("consultar")]
         public async Task<IActionResult> Consultar([FromBody] VerificarAlumnoDTO model)
         {
@@ -50,7 +47,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, rsp);
             }
         }
-
         [HttpPost("registrar")]
         public async Task<IActionResult> Registrar([FromBody] RegistroEstudianteDTO model)
         {

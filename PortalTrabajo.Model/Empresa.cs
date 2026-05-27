@@ -1,25 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-
 namespace PortalTrabajo.Model;
-
 public partial class Empresa
 {
     public int Id { get; set; }
-
     public int UsuarioId { get; set; }
-
     public string NombreComercial { get; set; } = null!;
-
     public string? Sector { get; set; }
-
     public string? Descripcion { get; set; }
-
     public string? SitioWeb { get; set; }
-
     public string? LogoUrl { get; set; }
-
+    public string? RazonSocial { get; set; }
+    public string? Nit { get; set; }
+    public string? Direccion { get; set; }
+    public string? TelefonoFijo { get; set; }
+    public string? CorreoInstitucional { get; set; }
+    public string? Facebook { get; set; }
+    public string? Twitter { get; set; }
+    public virtual ContactosEmpresa? ContactosEmpresa { get; set; }
     public virtual ICollection<OfertasLaborale> OfertasLaborales { get; set; } = new List<OfertasLaborale>();
-
     public virtual Usuario Usuario { get; set; } = null!;
 }

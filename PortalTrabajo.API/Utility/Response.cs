@@ -1,4 +1,4 @@
-﻿namespace PortalTrabajo.API.Utility
+namespace PortalTrabajo.API.Utility
 {
     public class Response<T>
     {

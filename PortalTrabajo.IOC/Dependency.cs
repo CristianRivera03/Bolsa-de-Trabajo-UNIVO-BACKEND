@@ -13,27 +13,20 @@ using PortalTrabajo.DAL.DBContext;
 using PortalTrabajo.Utility.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 namespace PortalTrabajo.IOC
 {
     public static class Dependency
     {
         public static void DependencyInjection(this IServiceCollection services , IConfiguration configuration)
         {
-            //Base de datos
             services.AddDbContext<PortalTrabajoDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("connectionDB")
              ));
-
-            //Entorno de cloudnary
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
-
-            //Entorno de JWT
+            services.Configure<ConfiguracionCorreo>(configuration.GetSection("ConfiguracionCorreo"));
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
-            
             var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>();
             var key = Encoding.ASCII.GetBytes(jwtSettings.Key);
-
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,10 +48,7 @@ namespace PortalTrabajo.IOC
                     ClockSkew = TimeSpan.Zero
                 };
             });
-            //Repos
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-            //Services
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IAlumnoService, PortalTrabajo.BLL.Services.Implementation.AlumnoService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IOfertaLaboralService, PortalTrabajo.BLL.Services.Implementation.OfertaLaboralService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IAuthService, PortalTrabajo.BLL.Services.Implementation.AuthService>();
@@ -71,24 +61,15 @@ namespace PortalTrabajo.IOC
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEstudianteIdiomaService, PortalTrabajo.BLL.Services.Implementation.EstudianteIdiomaService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEducacionService, PortalTrabajo.BLL.Services.Implementation.EducacionService>();
             services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEstudianteHabilidadService, PortalTrabajo.BLL.Services.Implementation.EstudianteHabilidadService>();
-
-            //BackgroundServices
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IAdminService, PortalTrabajo.BLL.Services.Implementation.AdminService>();
+            services.AddScoped<PortalTrabajo.BLL.Services.Contract.IEmailService, PortalTrabajo.BLL.Services.Implementation.EmailService>();
             services.AddHostedService<OfertasExpiracionService>();
-
-            //Automapper
             services.AddAutoMapper( cfg =>
             {
                 cfg.AddProfile<AutoMapperProfile>();
             }, typeof(AutoMapperProfile));
-
-
-            //Cloudinary
             services.AddScoped<ICloudinaryUtility, CloudinaryUtility>();
-            
-            //JWT
             services.AddScoped<IJwtUtility, JwtUtility>();
-
-            //CV Generator
             services.AddScoped<ICvGeneratorService, CvGeneratorService>();
         }
     }

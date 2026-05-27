@@ -1,8 +1,7 @@
-﻿using PortalTrabajo.DTO.PerfilesEstudiante;
+using PortalTrabajo.DTO.PerfilesEstudiante;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 namespace PortalTrabajo.BLL.Services.Contract
 {
     public interface IProyectosService

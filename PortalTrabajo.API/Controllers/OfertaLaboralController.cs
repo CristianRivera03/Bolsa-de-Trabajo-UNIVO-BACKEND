@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalTrabajo.API.Utility;
@@ -5,8 +6,8 @@ using PortalTrabajo.BLL.Services.Contract;
 using PortalTrabajo.DTO.OfertasLaborales;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
-
 namespace PortalTrabajo.API.Controllers
 {
     [Route("api/[controller]")]
@@ -14,12 +15,10 @@ namespace PortalTrabajo.API.Controllers
     public class OfertaLaboralController : ControllerBase
     {
         private readonly IOfertaLaboralService _ofertaService;
-
         public OfertaLaboralController(IOfertaLaboralService ofertaService)
         {
             _ofertaService = ofertaService;
         }
-
         [HttpGet("lista")]
         public async Task<IActionResult> Lista()
         {
@@ -38,7 +37,32 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, rsp);
             }
         }
-
+        [HttpGet("mis-ofertas")]
+        [Authorize(Roles = "Empresa")]
+        public async Task<IActionResult> MisOfertas()
+        {
+            var rsp = new Response<List<OfertaLaboralDTO>>();
+            try
+            {
+                var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(claimId, out int usuarioEmpresaId))
+                {
+                    rsp.status = false;
+                    rsp.msg = "Token inválido.";
+                    return Unauthorized(rsp);
+                }
+                var lista = await _ofertaService.ObtenerMisOfertasAsync(usuarioEmpresaId);
+                rsp.status = true;
+                rsp.value = lista;
+                return Ok(rsp);
+            }
+            catch (Exception ex)
+            {
+                rsp.status = false;
+                rsp.msg = ex.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, rsp);
+            }
+        }
         [HttpPost("crear")]
         public async Task<IActionResult> Crear([FromBody] OfertaLaboralCreateDTO model)
         {
@@ -46,7 +70,6 @@ namespace PortalTrabajo.API.Controllers
             try
             {
                 var ofertaCreada = await _ofertaService.Crear(model);
-
                 rsp.status = true;
                 rsp.value = ofertaCreada;
                 return Ok(rsp);
@@ -58,15 +81,12 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, rsp);
             }
         }
-
         [HttpGet("{id:int}")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             try
             {
                 var oferta = await _ofertaService.ObtenerPorId(id);
-
-                // Si el servicio devuelve null, significa que no existe
                 if (oferta == null)
                 {
                     return NotFound(new
@@ -76,8 +96,6 @@ namespace PortalTrabajo.API.Controllers
                         msg = $"No se encontró ninguna oferta con el ID {id}"
                     });
                 }
-
-                // Si la encuentra, la devuelve con status 200 (OK)
                 return Ok(new
                 {
                     status = true,
@@ -95,7 +113,5 @@ namespace PortalTrabajo.API.Controllers
                 });
             }
         }
-
-
     }
 }

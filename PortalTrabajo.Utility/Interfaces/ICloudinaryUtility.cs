@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 namespace PortalTrabajo.Utility.Interfaces
 {
     public interface ICloudinaryUtility

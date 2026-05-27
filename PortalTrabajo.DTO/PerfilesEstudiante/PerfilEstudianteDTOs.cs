@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-
 namespace PortalTrabajo.DTO.PerfilesEstudiante
 {
     public class PerfilEstudianteDTO
@@ -21,15 +20,12 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public int? CarreraId { get; set; }
         public string CarreraNombre { get; set; }
         public bool BuscaEmpleo { get; set; }
-
         public List<EducacionDTO> Educaciones { get; set; } = new List<EducacionDTO>();
         public List<ExperienciaLaboralDTO> ExperienciasLaborales { get; set; } = new List<ExperienciaLaboralDTO>();
         public List<EstudianteHabilidadDTO> Habilidades { get; set; } = new List<EstudianteHabilidadDTO>();
         public List<EstudianteIdiomaDTO> Idiomas { get; set; } = new List<EstudianteIdiomaDTO>();
         public List<ProyectoEstudianteDTO> Proyectos { get; set; } = new List<ProyectoEstudianteDTO>();
-
     }
-
     public class EducacionDTO
     {
         public int Id { get; set; }
@@ -41,7 +37,6 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public DateOnly? FechaFin { get; set; }
         public string Estado { get; set; }
     }
-
     public class ExperienciaLaboralDTO
     {
         public int Id { get; set; }
@@ -52,14 +47,12 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public bool? EsTrabajoActual { get; set; }
         public string DescripcionPuesto { get; set; }
     }
-
     public class EstudianteHabilidadDTO
     {
         public int HabilidadId { get; set; }
         public string NombreHabilidad { get; set; }
         public int NivelDominio { get; set; }
     }
-
     public class EstudianteIdiomaDTO
     {
         public int Id { get; set; }
@@ -67,7 +60,6 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public int NivelId { get; set; }
         public string NivelNombre { get; set; }
     }
-
     public class PerfilEstudianteUpdateDTO
     {
         public string? Nombres { get; set; }
@@ -81,7 +73,6 @@ namespace PortalTrabajo.DTO.PerfilesEstudiante
         public int? CarreraId { get; set; }
         public bool? BuscaEmpleo { get; set; }
     }
-
     public class ProyectoEstudianteDTO
     {
         public int Id { get; set; }

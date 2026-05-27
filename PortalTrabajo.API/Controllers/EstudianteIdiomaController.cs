@@ -1,11 +1,10 @@
-Ôªøusing Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PortalTrabajo.BLL.Services.Contract;
 using PortalTrabajo.DTO.PerfilesEstudiante;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
 namespace PortalTrabajo.API.Controllers
 {
     [Route("api/PerfilEstudiante/Idiomas")]
@@ -14,12 +13,10 @@ namespace PortalTrabajo.API.Controllers
     public class EstudianteIdiomaController : ControllerBase
     {
         private readonly IEstudianteIdiomaService _idiomaService;
-
         public EstudianteIdiomaController(IEstudianteIdiomaService idiomaService)
         {
             _idiomaService = idiomaService;
         }
-
         [HttpPost]
         public async Task<IActionResult> Agregar([FromBody] EstudianteIdiomaDTO dto)
         {
@@ -27,17 +24,15 @@ namespace PortalTrabajo.API.Controllers
             {
                 var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!int.TryParse(claimId, out int usuarioId))
-                    return Unauthorized(new { status = false, msg = "Token inv√°lido." });
-
+                    return Unauthorized(new { status = false, msg = "Token inv·lido." });
                 var resultado = await _idiomaService.AddIdiomaAsync(usuarioId, dto);
-                return Ok(new { status = resultado, msg = "Idioma guardado con √©xito." });
+                return Ok(new { status = resultado, msg = "Idioma guardado con Èxito." });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { status = false, msg = ex.Message });
             }
         }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Editar(int id, [FromBody] EstudianteIdiomaDTO dto)
         {
@@ -45,17 +40,15 @@ namespace PortalTrabajo.API.Controllers
             {
                 var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!int.TryParse(claimId, out int usuarioId))
-                    return Unauthorized(new { status = false, msg = "Token inv√°lido." });
-
+                    return Unauthorized(new { status = false, msg = "Token inv·lido." });
                 var resultado = await _idiomaService.UpdateIdiomaAsync(usuarioId, id, dto);
-                return Ok(new { status = resultado, msg = "Idioma actualizado con √©xito." });
+                return Ok(new { status = resultado, msg = "Idioma actualizado con Èxito." });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { status = false, msg = ex.Message });
             }
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -63,8 +56,7 @@ namespace PortalTrabajo.API.Controllers
             {
                 var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!int.TryParse(claimId, out int usuarioId))
-                    return Unauthorized(new { status = false, msg = "Token inv√°lido." });
-
+                    return Unauthorized(new { status = false, msg = "Token inv·lido." });
                 var resultado = await _idiomaService.DeleteIdiomaAsync(usuarioId, id);
                 return Ok(new { status = resultado, msg = "Idioma eliminado." });
             }

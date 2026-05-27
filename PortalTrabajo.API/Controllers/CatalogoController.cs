@@ -5,7 +5,6 @@ using PortalTrabajo.API.Utility;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
-
 namespace PortalTrabajo.API.Controllers
 {
     [Route("api/[controller]")]
@@ -13,12 +12,10 @@ namespace PortalTrabajo.API.Controllers
     public class CatalogoController : ControllerBase
     {
         private readonly ICatalogoService _catalogoService;
-
         public CatalogoController(ICatalogoService catalogoService)
         {
             _catalogoService = catalogoService;
         }
-
         [HttpGet("carreras")]
         public async Task<IActionResult> ObtenerCarreras()
         {
@@ -32,7 +29,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("modalidades")]
         public async Task<IActionResult> ObtenerModalidades()
         {
@@ -46,7 +42,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("niveles-idioma")]
         public async Task<IActionResult> ObtenerNivelesIdioma()
         {
@@ -60,7 +55,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("grados-academicos")]
         public async Task<IActionResult> ObtenerGradosAcademicos()
         {
@@ -74,7 +68,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("estados-postulacion")]
         public async Task<IActionResult> ObtenerEstadosPostulacion()
         {
@@ -88,7 +81,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("departamentos")]
         public async Task<IActionResult> ObtenerDepartamentos()
         {
@@ -102,7 +94,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("municipios/{departamentoId}")]
         public async Task<IActionResult> ObtenerMunicipios(int departamentoId)
         {
@@ -116,7 +107,19 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
+        [HttpGet("distritos/{municipioId}")]
+        public async Task<IActionResult> ObtenerDistritos(int municipioId)
+        {
+            try
+            {
+                var response = await _catalogoService.ObtenerDistritos(municipioId);
+                return Ok(new Response<List<CatalogDTO>> { status = true, value = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
+            }
+        }
         [HttpGet("tipos-contrato")]
         public async Task<IActionResult> ObtenerTiposContrato()
         {
@@ -130,7 +133,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("tipos-licencia")]
         public async Task<IActionResult> ObtenerTiposLicencia()
         {
@@ -144,7 +146,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("generos")]
         public async Task<IActionResult> ObtenerGeneros()
         {
@@ -158,7 +159,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, new Response<List<CatalogDTO>> { status = false, msg = ex.Message });
             }
         }
-
         [HttpGet("habilidades")]
         public async Task<IActionResult> ObtenerHabilidades()
         {

@@ -7,7 +7,6 @@ using PortalTrabajo.DTO.Empresas;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
 namespace PortalTrabajo.API.Controllers
 {
     [Route("api/[controller]")]
@@ -15,14 +14,11 @@ namespace PortalTrabajo.API.Controllers
     public class EmpresaController : ControllerBase
     {
         private readonly IEmpresaService _empresaService;
-
         public EmpresaController(IEmpresaService empresaService)
         {
             _empresaService = empresaService;
         }
-
         [HttpPost("registrar")]
-
         public async Task<IActionResult> Registrar([FromBody] EmpresaCreateDTO model)
         {
             var rsp = new Response<EmpresaDTO>();
@@ -40,7 +36,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, rsp);
             }
         }
-
         [HttpGet("MiPerfil")]
         [Authorize(Roles = "Empresa")]
         public async Task<IActionResult> GetMiPerfil()
@@ -53,7 +48,6 @@ namespace PortalTrabajo.API.Controllers
                 {
                     return Unauthorized("Token inválido o expirado");
                 }
-
                 var empresa = await _empresaService.ObtenerMiEmpresaAsync(usuarioId);
                 rsp.status = true;
                 rsp.value = empresa;
@@ -66,7 +60,6 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, rsp);
             }
         }
-
         [HttpPut("MiPerfil")]
         [Authorize(Roles = "Empresa")]
         public async Task<IActionResult> UpdateMiPerfil([FromBody] EmpresaUpdateDTO dto)
@@ -79,7 +72,6 @@ namespace PortalTrabajo.API.Controllers
                 {
                     return Unauthorized("Token inválido o expirado");
                 }
-
                 var empresaActualizada = await _empresaService.ActualizarEmpresaAsync(usuarioId, dto);
                 rsp.status = true;
                 rsp.value = empresaActualizada;
@@ -92,31 +84,29 @@ namespace PortalTrabajo.API.Controllers
                 return StatusCode(500, rsp);
             }
         }
-
-        [HttpPost("CambiarLogo")]
-        [Authorize(Roles = "Empresa")]
-        public async Task<IActionResult> CambiarLogo([FromForm] PortalTrabajo.DTO.Shared.CambiarImagenDTO dto)
-        {
-            var rsp = new Response<string>();
-            try
+            [HttpPost("CambiarLogo")]
+            [Authorize(Roles = "Empresa")]
+            public async Task<IActionResult> CambiarLogo([FromForm] PortalTrabajo.DTO.Shared.CambiarImagenDTO dto)
             {
-                var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(usuarioIdClaim) || !int.TryParse(usuarioIdClaim, out int usuarioId))
+                var rsp = new Response<string>();
+                try
                 {
-                    return Unauthorized("Token inválido o expirado");
+                    var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (string.IsNullOrEmpty(usuarioIdClaim) || !int.TryParse(usuarioIdClaim, out int usuarioId))
+                    {
+                        return Unauthorized("Token inválido o expirado");
+                    }
+                    var nuevaUrl = await _empresaService.CambiarLogoAsync(usuarioId, dto);
+                    rsp.status = true;
+                    rsp.value = nuevaUrl;
+                    return Ok(rsp);
                 }
-
-                var nuevaUrl = await _empresaService.CambiarLogoAsync(usuarioId, dto);
-                rsp.status = true;
-                rsp.value = nuevaUrl;
-                return Ok(rsp);
+                catch (Exception ex)
+                {
+                    rsp.status = false;
+                    rsp.msg = ex.Message;
+                    return StatusCode(500, rsp);
+                }
             }
-            catch (Exception ex)
-            {
-                rsp.status = false;
-                rsp.msg = ex.Message;
-                return StatusCode(500, rsp);
-            }
-        }
     }
 }

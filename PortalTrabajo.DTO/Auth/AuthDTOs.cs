@@ -1,5 +1,4 @@
 using System;
-
 namespace PortalTrabajo.DTO.Auth
 {
     public class LoginDTO
@@ -7,7 +6,6 @@ namespace PortalTrabajo.DTO.Auth
         public string Email { get; set; }
         public string Password { get; set; }
     }
-
     public class SessionDTO
     {
         public int UsuarioId { get; set; }
@@ -15,5 +13,14 @@ namespace PortalTrabajo.DTO.Auth
         public string RolName { get; set; }
         public string NombreCompleto { get; set; }
         public string Token { get; set; }
+    }
+    public class RecuperarPasswordDTO
+    {
+        public string Email { get; set; }
+    }
+    public class RestablecerPasswordDTO
+    {
+        public string Token { get; set; }
+        public string NuevaPassword { get; set; }
     }
 }

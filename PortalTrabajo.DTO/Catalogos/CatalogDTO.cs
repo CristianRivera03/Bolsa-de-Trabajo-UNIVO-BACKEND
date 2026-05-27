@@ -1,5 +1,4 @@
 using System;
-
 namespace PortalTrabajo.DTO.Catalogos
 {
     public class CatalogDTO

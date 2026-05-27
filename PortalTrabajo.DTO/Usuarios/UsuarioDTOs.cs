@@ -1,5 +1,4 @@
 using System;
-
 namespace PortalTrabajo.DTO.Usuarios
 {
     public class UsuarioDTO
@@ -10,7 +9,6 @@ namespace PortalTrabajo.DTO.Usuarios
         public bool? Activo { get; set; }
         public DateTime? FechaRegistro { get; set; }
     }
-
     public class UsuarioCreateDTO
     {
         public string Email { get; set; }
