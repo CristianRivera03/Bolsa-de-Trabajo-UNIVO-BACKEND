@@ -22,6 +22,7 @@ namespace PortalTrabajo.IOC
             services.AddDbContext<PortalTrabajoDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("connectionDB")
              ));
+
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
             services.Configure<ConfiguracionCorreo>(configuration.GetSection("ConfiguracionCorreo"));
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
