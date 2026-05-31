@@ -18,5 +18,14 @@ namespace PortalTrabajo.BLL.Services.Contract
         Task<List<CatalogDTO>> ObtenerTiposLicencia();
         Task<List<CatalogDTO>> ObtenerGeneros();
         Task<List<CatalogDTO>> ObtenerHabilidades();
+        Task<List<CatalogDTO>> ObtenerSectores();
+
+        // CRUD Admin
+        Task<CatalogDTO> CrearSector(CatalogDTO dto);
+        Task<bool> EliminarSector(int id);
+        Task<CatalogDTO> CrearHabilidad(CatalogDTO dto);
+        Task<bool> EliminarHabilidad(int id);
+        Task<CatalogDTO> CrearCarrera(CatalogDTO dto);
+        Task<bool> EliminarCarrera(int id);
     }
 }

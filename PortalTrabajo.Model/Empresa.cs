@@ -6,7 +6,7 @@ public partial class Empresa
     public int Id { get; set; }
     public int UsuarioId { get; set; }
     public string NombreComercial { get; set; } = null!;
-    public string? Sector { get; set; }
+    public int? SectorId { get; set; }
     public string? Descripcion { get; set; }
     public string? SitioWeb { get; set; }
     public string? LogoUrl { get; set; }
@@ -20,4 +20,5 @@ public partial class Empresa
     public virtual ContactosEmpresa? ContactosEmpresa { get; set; }
     public virtual ICollection<OfertasLaborale> OfertasLaborales { get; set; } = new List<OfertasLaborale>();
     public virtual Usuario Usuario { get; set; } = null!;
+    public virtual CatSector? SectorNavigation { get; set; }
 }

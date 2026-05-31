@@ -24,8 +24,9 @@ namespace PortalTrabajo.BLL.Services.Implementation
         private readonly IGenericRepository<CatGenero> _generoRepo;
         private readonly IGenericRepository<Habilidade> _habilidadesRepo;
         private readonly IGenericRepository<CatDistrito> _distritoRepo;
+        private readonly IGenericRepository<CatSector> _sectorRepo;
         private readonly IMapper _mapper;
-        public CatalogoService(IGenericRepository<CatCarrera> carreraRepo, IGenericRepository<CatModalidade> modalidadRepo, IGenericRepository<CatNivelesIdioma> nivelIdiomaRepo, IGenericRepository<CatGradosAcademico> gradoAcademicoRepo, IGenericRepository<CatRole> rolRepo, IGenericRepository<CatEstadosPostulacion> estadoPostulacionRepo, IGenericRepository<CatDepartamento> departamentoRepo, IGenericRepository<CatMunicipio> municipioRepo, IGenericRepository<CatTiposContrato> tipoContratoRepo, IGenericRepository<CatTiposLicencium> tipoLicenciaRepo, IGenericRepository<CatGenero> generoRepo, IGenericRepository<Habilidade> habilidadesRepo, IGenericRepository<CatDistrito> distritoRepo, IMapper mapper)
+        public CatalogoService(IGenericRepository<CatCarrera> carreraRepo, IGenericRepository<CatModalidade> modalidadRepo, IGenericRepository<CatNivelesIdioma> nivelIdiomaRepo, IGenericRepository<CatGradosAcademico> gradoAcademicoRepo, IGenericRepository<CatRole> rolRepo, IGenericRepository<CatEstadosPostulacion> estadoPostulacionRepo, IGenericRepository<CatDepartamento> departamentoRepo, IGenericRepository<CatMunicipio> municipioRepo, IGenericRepository<CatTiposContrato> tipoContratoRepo, IGenericRepository<CatTiposLicencium> tipoLicenciaRepo, IGenericRepository<CatGenero> generoRepo, IGenericRepository<Habilidade> habilidadesRepo, IGenericRepository<CatDistrito> distritoRepo, IGenericRepository<CatSector> sectorRepo, IMapper mapper)
         {
             _carreraRepo = carreraRepo;
             _modalidadRepo = modalidadRepo;
@@ -40,6 +41,7 @@ namespace PortalTrabajo.BLL.Services.Implementation
             _generoRepo = generoRepo;
             _habilidadesRepo = habilidadesRepo;
             _distritoRepo = distritoRepo;
+            _sectorRepo = sectorRepo;
             _mapper = mapper;
         }
         public async Task<List<CatalogDTO>> ObtenerCarreras()
@@ -106,6 +108,54 @@ namespace PortalTrabajo.BLL.Services.Implementation
         {
             var query = await _habilidadesRepo.Query().ToListAsync();
             return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<List<CatalogDTO>> ObtenerSectores()
+        {
+            var query = await _sectorRepo.Query().ToListAsync();
+            return _mapper.Map<List<CatalogDTO>>(query);
+        }
+
+        public async Task<CatalogDTO> CrearSector(CatalogDTO dto)
+        {
+            var entity = new CatSector { Nombre = dto.Nombre };
+            var result = await _sectorRepo.Create(entity);
+            return new CatalogDTO { Id = result.Id, Nombre = result.Nombre };
+        }
+
+        public async Task<bool> EliminarSector(int id)
+        {
+            var entity = await _sectorRepo.Get(x => x.Id == id);
+            if (entity == null) return false;
+            return await _sectorRepo.HardDelete(entity);
+        }
+
+        public async Task<CatalogDTO> CrearHabilidad(CatalogDTO dto)
+        {
+            var entity = new Habilidade { Nombre = dto.Nombre };
+            var result = await _habilidadesRepo.Create(entity);
+            return new CatalogDTO { Id = result.Id, Nombre = result.Nombre };
+        }
+
+        public async Task<bool> EliminarHabilidad(int id)
+        {
+            var entity = await _habilidadesRepo.Get(x => x.Id == id);
+            if (entity == null) return false;
+            return await _habilidadesRepo.HardDelete(entity);
+        }
+
+        public async Task<CatalogDTO> CrearCarrera(CatalogDTO dto)
+        {
+            var entity = new CatCarrera { Nombre = dto.Nombre, Activa = true };
+            var result = await _carreraRepo.Create(entity);
+            return new CatalogDTO { Id = result.Id, Nombre = result.Nombre };
+        }
+
+        public async Task<bool> EliminarCarrera(int id)
+        {
+            var entity = await _carreraRepo.Get(x => x.Id == id);
+            if (entity == null) return false;
+            return await _carreraRepo.HardDelete(entity);
         }
     }
 }

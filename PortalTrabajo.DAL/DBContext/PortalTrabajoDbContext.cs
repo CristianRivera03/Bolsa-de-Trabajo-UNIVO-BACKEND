@@ -25,6 +25,7 @@ public partial class PortalTrabajoDbContext : DbContext
     public virtual DbSet<CatRole> CatRoles { get; set; }
     public virtual DbSet<CatTiposContrato> CatTiposContratos { get; set; }
     public virtual DbSet<CatTiposLicencium> CatTiposLicencia { get; set; }
+    public virtual DbSet<CatSector> CatSectores { get; set; }
     public virtual DbSet<ContactosEmpresa> ContactosEmpresas { get; set; }
     public virtual DbSet<Educacion> Educacions { get; set; }
     public virtual DbSet<Empresa> Empresas { get; set; }
@@ -133,6 +134,12 @@ public partial class PortalTrabajoDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__CatTipos__3214EC07049DC62F");
             entity.Property(e => e.Nombre).HasMaxLength(50);
         });
+        modelBuilder.Entity<CatSector>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("CatSectores");
+            entity.Property(e => e.Nombre).HasMaxLength(150);
+        });
         modelBuilder.Entity<ContactosEmpresa>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Contacto__3214EC0768A6AAE4");
@@ -176,13 +183,16 @@ public partial class PortalTrabajoDbContext : DbContext
                 .HasColumnName("NIT");
             entity.Property(e => e.NombreComercial).HasMaxLength(200);
             entity.Property(e => e.RazonSocial).HasMaxLength(200);
-            entity.Property(e => e.Sector).HasMaxLength(100);
+            entity.Property(e => e.SectorId).HasColumnName("SectorId");
             entity.Property(e => e.SitioWeb).HasMaxLength(2048);
             entity.Property(e => e.TelefonoFijo).HasMaxLength(20);
             entity.Property(e => e.Twitter).HasMaxLength(2048);
             entity.HasOne(d => d.Usuario).WithOne(p => p.Empresa)
                 .HasForeignKey<Empresa>(d => d.UsuarioId)
                 .HasConstraintName("FK_Empresas_Usuario");
+            entity.HasOne(d => d.SectorNavigation).WithMany(p => p.Empresas)
+                .HasForeignKey(d => d.SectorId)
+                .HasConstraintName("FK_Empresas_Sector");
         });
         modelBuilder.Entity<EstudianteHabilidade>(entity =>
         {

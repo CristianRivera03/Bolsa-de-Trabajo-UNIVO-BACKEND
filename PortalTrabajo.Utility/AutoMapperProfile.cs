@@ -53,6 +53,7 @@ namespace PortalTrabajo.Utility
             #region Empresas
             CreateMap<ContactosEmpresa, ContactoEmpresaDTO>().ReverseMap();
             CreateMap<Empresa, EmpresaDTO>()
+                .ForMember(dest => dest.Sector, opt => opt.MapFrom(src => src.SectorNavigation != null ? src.SectorNavigation.Nombre : null))
                 .ForMember(dest => dest.Contacto, opt => opt.MapFrom(src => src.ContactosEmpresa))
                 .ReverseMap()
                 .ForMember(dest => dest.ContactosEmpresa, opt => opt.MapFrom(src => src.Contacto));
@@ -106,6 +107,7 @@ namespace PortalTrabajo.Utility
             CreateMap<CatTiposLicencium, CatalogDTO>().ReverseMap();
             CreateMap<CatGenero, CatalogDTO>().ReverseMap();
             CreateMap<CatDistrito, CatalogDTO>().ReverseMap();
+            CreateMap<CatSector, CatalogDTO>().ReverseMap();
             #endregion
         }
     }
