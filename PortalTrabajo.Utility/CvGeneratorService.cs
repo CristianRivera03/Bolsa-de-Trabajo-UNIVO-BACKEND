@@ -58,7 +58,7 @@ namespace PortalTrabajo.Utility
                                col.Item().PaddingTop(20);
                                TituloIzquierdo(col, "CONTACTO");
                                col.Item().PaddingTop(10).Text(perfil.Telefono).FontColor(Colors.White);
-                               col.Item().PaddingTop(5).Text("crisriy2003@gmail.com").FontColor(Colors.White); // Sustituir por email real si lo agregas al DTO
+                               col.Item().PaddingTop(5).Text("crisriy2003@gmail.com").FontColor(Colors.White); 
                                col.Item().PaddingTop(5).Text(perfil.Direccion).FontColor(Colors.White);
                                if (!string.IsNullOrEmpty(perfil.EnlaceGitHub))
                                    col.Item().PaddingTop(5).Text(perfil.EnlaceGitHub.Replace("https://", "")).FontColor(Colors.White);
