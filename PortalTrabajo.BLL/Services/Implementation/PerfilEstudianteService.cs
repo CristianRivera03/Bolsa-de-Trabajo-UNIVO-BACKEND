@@ -1,0 +1,102 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using PortalTrabajo.BLL.Services.Contract;
+using PortalTrabajo.DAL.Repositories.Contract;
+using PortalTrabajo.DTO.PerfilesEstudiante;
+using PortalTrabajo.Model;
+using System;
+using System.Threading.Tasks;
+namespace PortalTrabajo.BLL.Services.Implementation;
+public class PerfilEstudianteService : IPerfilEstudianteService
+{
+    private readonly IGenericRepository<PerfilesEstudiante> _perfilRepo;
+    private readonly IMapper _mapper;
+    private readonly PortalTrabajo.Utility.Interfaces.ICloudinaryUtility _cloudinaryUtility;
+    public PerfilEstudianteService(
+        IGenericRepository<PerfilesEstudiante> perfilRepo, 
+        IMapper mapper,
+        PortalTrabajo.Utility.Interfaces.ICloudinaryUtility cloudinaryUtility)
+    {
+        _perfilRepo = perfilRepo;
+        _mapper = mapper;
+        _cloudinaryUtility = cloudinaryUtility;
+    }
+    public async Task<PerfilEstudianteDTO> GetPerfilByUsuarioIdAsync(int usuarioId)
+    {
+        var perfil = await _perfilRepo.Query(p => p.UsuarioId == usuarioId)
+            .Include(p => p.Carrera)
+            .Include(p => p.Distrito)
+                .ThenInclude(d => d.Municipio)
+            .Include(p => p.ExperienciasLaborales)
+            .Include(p => p.ProyectosEstudiantes)
+            .Include(p => p.Carrera)
+            .Include(p => p.Educacions)
+                .ThenInclude(e => e.GradoAcademico)
+            .Include(p => p.EstudianteHabilidades)
+                .ThenInclude(h => h.Habilidad)
+            .Include(p => p.EstudianteIdiomas)
+                .ThenInclude(i => i.Nivel)        
+            .FirstOrDefaultAsync();                 
+        if (perfil == null)
+            throw new Exception("Perfil no encontrado para el usuario especificado.");
+        return _mapper.Map<PerfilEstudianteDTO>(perfil);
+    }
+    public async Task<PerfilEstudianteDTO> GetPerfilByPerfilIdAsync(int perfilId)
+    {
+        var perfil = await _perfilRepo.Query(p => p.Id == perfilId)
+            .Include(p => p.Carrera)
+            .Include(p => p.Distrito)
+                .ThenInclude(d => d.Municipio)
+            .Include(p => p.ExperienciasLaborales)
+            .Include(p => p.ProyectosEstudiantes)
+            .Include(p => p.Carrera)
+            .Include(p => p.Educacions)
+                .ThenInclude(e => e.GradoAcademico)
+            .Include(p => p.EstudianteHabilidades)
+                .ThenInclude(h => h.Habilidad)
+            .Include(p => p.EstudianteIdiomas)
+                .ThenInclude(i => i.Nivel)        
+            .FirstOrDefaultAsync();                 
+        if (perfil == null)
+            throw new Exception("Perfil no encontrado para el ID especificado.");
+        return _mapper.Map<PerfilEstudianteDTO>(perfil);
+    }
+    public async Task<PerfilEstudianteDTO> UpdatePerfilAsync(int usuarioId, PerfilEstudianteUpdateDTO dto)
+    {
+        var perfilDb = await _perfilRepo.Get(p => p.UsuarioId == usuarioId);
+        if (perfilDb == null)
+        {
+            throw new Exception("Perfil no encontrado para este usuario.");
+        }
+        _mapper.Map(dto, perfilDb);
+        await _perfilRepo.Update(perfilDb); 
+        return _mapper.Map<PerfilEstudianteDTO>(perfilDb);
+    }
+    public async Task<string> CambiarFotoAsync(int usuarioId, PortalTrabajo.DTO.Shared.CambiarImagenDTO dto)
+    {
+        var perfil = await _perfilRepo.Get(p => p.UsuarioId == usuarioId);
+        if (perfil == null) throw new Exception("Perfil no encontrado.");
+        if (dto.Archivo == null || dto.Archivo.Length == 0)
+            throw new Exception("No se ha proporcionado ninguna imagen.");
+        string nuevaUrl = await _cloudinaryUtility.SubirImagenAsync(dto.Archivo, "Perfiles");
+        if (string.IsNullOrEmpty(nuevaUrl))
+            throw new Exception("Error al subir la imagen a Cloudinary.");
+        if (!string.IsNullOrEmpty(perfil.FotoUrl) && perfil.FotoUrl.Contains("cloudinary.com"))
+        {
+            var segments = new Uri(perfil.FotoUrl).Segments;
+            var publicIdWithExtension = string.Join("", segments.Skip(segments.Length - 3)); // toma PortalTrabajo/Perfiles/xyz.jpg
+            var publicId = System.IO.Path.ChangeExtension(publicIdWithExtension, null).Replace("/", "/"); 
+            try
+            {
+                var idToDestroy = publicIdWithExtension.Substring(0, publicIdWithExtension.LastIndexOf('.')); // Remueve la extensión
+                await _cloudinaryUtility.EliminarImagenAsync(idToDestroy);
+            }
+            catch { }
+        }
+        perfil.FotoUrl = nuevaUrl;
+        perfil.FechaModificacion = DateTime.Now;
+        await _perfilRepo.Update(perfil);
+        return nuevaUrl;
+    }
+}
+

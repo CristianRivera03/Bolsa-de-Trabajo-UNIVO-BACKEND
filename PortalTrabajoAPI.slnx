@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="PortalTrabajo.API/PortalTrabajo.API.csproj" />
+  <Project Path="PortalTrabajo.BLL/PortalTrabajo.BLL.csproj" />
+  <Project Path="PortalTrabajo.DAL/PortalTrabajo.DAL.csproj" />
+  <Project Path="PortalTrabajo.DTO/PortalTrabajo.DTO.csproj" />
+  <Project Path="PortalTrabajo.IOC/PortalTrabajo.IOC.csproj" />
+  <Project Path="PortalTrabajo.Model/PortalTrabajo.Model.csproj" />
+  <Project Path="PortalTrabajo.Utility/PortalTrabajo.Utility.csproj" />
+</Solution>
