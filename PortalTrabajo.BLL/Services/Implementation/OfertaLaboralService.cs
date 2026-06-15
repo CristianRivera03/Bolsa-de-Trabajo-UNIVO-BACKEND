@@ -135,7 +135,9 @@ namespace PortalTrabajo.BLL.Services.Implementation
                 if (ofertaCreada.Id == 0)
                     throw new TaskCanceledException("No se pudo crear la oferta laboral");
                 NotificarEstudiantesNuevasOfertas(ofertaCreada.Id, modelo.HabilidadIds ?? new List<int>(), modelo.CarreraIds ?? new List<int>(), empresaReal.NombreComercial, ofertaCreada.Titulo);
-                return _mapper.Map<OfertaLaboralDTO>(ofertaCreada);
+                
+                // Obtener la oferta completa con todas sus relaciones para mapearla correctamente
+                return await ObtenerPorId(ofertaCreada.Id);
             }
             catch (Exception ex)
             {
